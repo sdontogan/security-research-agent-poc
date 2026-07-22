@@ -1,6 +1,6 @@
 {
   "source": "https://github.com/sdontogan/beyond-features",
-  "commit": "90f896a31b62186ddc178ba9bc4a8fdf814af4a7",
+  "commit": "5b442260eb2687adfa39bcea1cc3b700f683f0d7",
   "files": [
     "functions/api/domain-research.ts",
     "functions/api/chat.ts",
