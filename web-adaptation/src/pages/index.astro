@@ -1,0 +1,196 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { readingTime } from '../utils/readingTime';
+
+const writing = (await getCollection('writing'))
+  .filter((entry) => !entry.data.draft)
+  .sort(
+    (first, second) =>
+      new Date(second.data.date).getTime() -
+      new Date(first.data.date).getTime(),
+  )
+  .slice(0, 2);
+---
+
+<BaseLayout
+  title="Beyond Features"
+  description="Sarah D's professional portfolio featuring AI and machine learning projects, a RAG-based LLM portfolio agent, and cybersecurity articles."
+>
+  <section class="home-stage">
+    <div class="home-stage-grid" aria-hidden="true"></div>
+    <div class="home-orbit home-orbit-one" aria-hidden="true"></div>
+    <div class="home-orbit home-orbit-two" aria-hidden="true"></div>
+
+    <div class="container-wide home-stage-inner">
+      <header class="home-intro">
+        <div class="home-intro-copy">
+          <p class="home-live-label"><span></span> Sarah D’s portfolio</p>
+          <h1>I build AI and machine learning systems for cybersecurity.</h1>
+          <p>
+            I’m a senior data scientist. Explore my projects, ask about my
+            professional background, and read my security articles.
+          </p>
+        </div>
+        <nav class="home-quick-nav" aria-label="Homepage highlights">
+          <a href="#security-agent"><span>01</span> AI research agent</a>
+          <a href="#portfolio-assistant"><span>02</span> RAG portfolio agent</a>
+          <a href="#latest-writing"><span>03</span> Security articles</a>
+        </nav>
+      </header>
+
+      <div class="home-showcase">
+        <article
+          class="home-product-card home-agent-card"
+          id="security-agent"
+          aria-labelledby="home-agent-title"
+        >
+          <div class="home-card-topline">
+            <span class="home-card-index">01 / FEATURED PROJECT</span>
+            <span class="home-status"><i></i> Try it now</span>
+          </div>
+
+          <div class="home-agent-visual" aria-hidden="true">
+            <div class="home-radar-ring home-radar-ring-one"></div>
+            <div class="home-radar-ring home-radar-ring-two"></div>
+            <div class="home-radar-ring home-radar-ring-three"></div>
+            <div class="home-radar-sweep"></div>
+            <span class="home-radar-node node-dns">DNS</span>
+            <span class="home-radar-node node-rdap">RDAP</span>
+            <span class="home-radar-node node-ct">CT</span>
+            <span class="home-radar-node node-verdict">VERDICT</span>
+          </div>
+
+          <div class="home-product-copy">
+            <p class="eyebrow">AI Security Research Agent</p>
+            <h2 id="home-agent-title">
+              Enter a domain and get a security research report.
+            </h2>
+            <p class="home-card-summary">
+              The agent checks public DNS, domain registration, and certificate
+              data. It uses an LLM to summarize the evidence and explain its
+              security verdict.
+            </p>
+            <div class="home-card-actions">
+              <a
+                class="home-primary-action"
+                href="/projects/ai-security-research-agent-poc#live-demo"
+              >
+                Research a domain <span aria-hidden="true">↗</span>
+              </a>
+              <a
+                class="home-inline-link"
+                href="https://github.com/sdontogan/security-research-agent-poc"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View code on GitHub
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article
+          class="home-product-card home-rag-card"
+          id="portfolio-assistant"
+          aria-labelledby="home-rag-title"
+        >
+          <div class="home-card-topline">
+            <span class="home-card-index">02 / RAG-BASED LLM AGENT</span>
+            <span class="home-status home-status-muted">Résumé + portfolio</span
+            >
+          </div>
+          <div class="home-chat-preview" aria-hidden="true">
+            <p>What has Sarah built with AI?</p>
+            <p>
+              Sarah has built production RAG, security machine learning, and AI
+              research systems.
+              <span>Sources: résumé · portfolio</span>
+            </p>
+          </div>
+          <div class="home-product-copy">
+            <p class="eyebrow">RAG Portfolio Agent</p>
+            <h2 id="home-rag-title">Ask an LLM agent about my experience.</h2>
+            <p class="home-card-summary">
+              It uses retrieval-augmented generation (RAG) to find relevant
+              facts in my résumé and portfolio, then an LLM turns those sources
+              into a clear answer.
+            </p>
+            <button class="home-secondary-action" type="button" data-chat-open>
+              Open the RAG agent <span aria-hidden="true">↗</span>
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="home-writing" id="latest-writing">
+    <div class="container-wide">
+      <header class="home-section-heading">
+        <div>
+          <p class="eyebrow">03 / Articles</p>
+          <h2>Articles about DNS security and machine learning.</h2>
+        </div>
+        <a class="home-section-link" href="/writing">
+          View all articles <span aria-hidden="true">↗</span>
+        </a>
+      </header>
+
+      {
+        writing.length ? (
+          <div class="home-writing-grid">
+            {writing.map((entry, index) => {
+              const href = entry.data.externalUrl || `/writing/${entry.id}`;
+              const external = Boolean(entry.data.externalUrl);
+              const minutes =
+                entry.data.readingMinutes || readingTime(entry.body);
+              return (
+                <article class="home-writing-card">
+                  <a
+                    class="home-writing-hitbox"
+                    href={href}
+                    target={external ? '_blank' : undefined}
+                    rel={external ? 'noopener noreferrer' : undefined}
+                    aria-label={`Read ${entry.data.title}`}
+                  />
+                  <div class="home-writing-number" aria-hidden="true">
+                    0{index + 1}
+                  </div>
+                  <div class="home-writing-content">
+                    <div class="home-writing-meta">
+                      <span>
+                        {entry.data.publication || entry.data.tags[0]}
+                      </span>
+                      <span>{minutes} min</span>
+                    </div>
+                    <h3>{entry.data.title}</h3>
+                    <p>{entry.data.description}</p>
+                    <span class="home-writing-read">
+                      Read the full article <i aria-hidden="true">↗</i>
+                    </span>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <p class="home-writing-empty">No published articles yet.</p>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="home-closing">
+    <div class="container-wide home-closing-inner">
+      <p>
+        Senior Data Scientist specializing in AI, machine learning, and
+        cybersecurity.
+      </p>
+      <div>
+        <a href="/recruiter">View recruiter overview</a>
+        <a href="/contact">Contact me</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -15,9 +15,13 @@ from pathlib import Path
 
 FILES = (
     "functions/api/domain-research.ts",
+    "functions/api/chat.ts",
     "functions/_lib/domain-agent-contract.ts",
+    "functions/_lib/knowledge.ts",
     "src/components/DomainResearchDemo.astro",
+    "src/components/ProfessionalChat.astro",
     "src/content/projects/ai-security-research-agent-poc.md",
+    "src/pages/index.astro",
     "src/styles/global.css",
 )
 REPOSITORY = "sdontogan/beyond-features"

@@ -120,7 +120,7 @@
   }
 }
 
-/* Professional background assistant */
+/* RAG-based LLM portfolio agent */
 .chat-assistant {
   position: fixed;
   right: clamp(1rem, 3vw, 2rem);

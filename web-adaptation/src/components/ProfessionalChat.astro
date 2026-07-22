@@ -1,0 +1,332 @@
+<div class="chat-assistant" data-chat-root>
+  <button
+    class="chat-launcher"
+    type="button"
+    aria-expanded="false"
+    aria-controls="professional-chat-panel"
+    aria-label="Ask Sarah’s RAG-based LLM agent"
+    data-chat-toggle
+  >
+    <span class="chat-launcher-dot" aria-hidden="true"></span>
+    <span class="chat-launcher-label">Ask Sarah’s RAG-based LLM agent</span>
+    <span class="chat-launcher-mobile-label" aria-hidden="true">AI</span>
+  </button>
+
+  <section
+    class="chat-panel"
+    id="professional-chat-panel"
+    aria-label="RAG-based LLM portfolio agent"
+    hidden
+    data-chat-panel
+  >
+    <header class="chat-header">
+      <div>
+        <p class="eyebrow">RAG-based LLM agent</p>
+        <h2>Ask about Sarah’s work</h2>
+      </div>
+      <button
+        class="chat-close"
+        type="button"
+        aria-label="Close assistant"
+        data-chat-close>×</button
+      >
+    </header>
+
+    <div class="chat-notice">
+      This agent uses retrieval-augmented generation (RAG) to find relevant
+      information in Sarah’s approved public résumé and portfolio. An LLM then
+      writes the answer from those sources. Questions and answers are retained
+      for up to 30 days to improve quality. Do not submit personal or
+      confidential information.
+    </div>
+
+    <div
+      class="chat-messages"
+      aria-live="polite"
+      aria-relevant="additions"
+      data-chat-messages
+    >
+      <article class="chat-message chat-message-assistant">
+        <p>
+          Hi — I’m Sarah’s RAG-based LLM agent. Ask me about her experience,
+          projects, technical skills, or approach to production AI.
+        </p>
+      </article>
+    </div>
+
+    <div class="chat-prompts" aria-label="Suggested questions">
+      <button
+        type="button"
+        data-chat-prompt="How many years of AI and machine-learning experience does Sarah have?"
+        >Years of AI experience</button
+      >
+      <button
+        type="button"
+        data-chat-prompt="What is Sarah’s cybersecurity experience?"
+        >Cybersecurity experience</button
+      >
+      <button
+        type="button"
+        data-chat-prompt="What production AI systems has Sarah built?"
+        >Production AI work</button
+      >
+      <button
+        type="button"
+        data-chat-prompt="What are Sarah’s strongest technical skills?"
+        >Technical strengths</button
+      >
+    </div>
+
+    <form class="chat-form" data-chat-form>
+      <label for="chat-question">Your question</label>
+      <textarea
+        id="chat-question"
+        name="question"
+        rows="2"
+        maxlength="300"
+        required
+        placeholder="Ask about experience, projects, or skills…"
+        data-chat-input></textarea>
+      <input
+        class="chat-honeypot"
+        type="text"
+        name="website"
+        tabindex="-1"
+        autocomplete="off"
+        aria-hidden="true"
+      />
+      <div class="chat-verification" data-chat-verification>
+        <span>Loading secure verification…</span>
+      </div>
+      <div class="chat-form-row">
+        <small>RAG answers are grounded in approved public sources.</small>
+        <button
+          class="button button-small"
+          type="submit"
+          disabled
+          data-chat-submit>Ask</button
+        >
+      </div>
+      <p class="chat-status" role="status" data-chat-status></p>
+    </form>
+  </section>
+</div>
+
+<script>
+  interface ChatConfig {
+    available: boolean;
+    turnstileSiteKey: string | null;
+  }
+  interface TurnstileApi {
+    render(
+      container: HTMLElement,
+      options: {
+        sitekey: string;
+        theme: 'auto';
+        size: 'flexible';
+        callback: (token: string) => void;
+        'expired-callback': () => void;
+        'error-callback': () => void;
+      },
+    ): string;
+    reset(widgetId: string): void;
+  }
+  declare global {
+    interface Window {
+      turnstile?: TurnstileApi;
+    }
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-chat-root]');
+  if (root) {
+    const toggle = root.querySelector<HTMLButtonElement>('[data-chat-toggle]');
+    const close = root.querySelector<HTMLButtonElement>('[data-chat-close]');
+    const panel = root.querySelector<HTMLElement>('[data-chat-panel]');
+    const form = root.querySelector<HTMLFormElement>('[data-chat-form]');
+    const input = root.querySelector<HTMLTextAreaElement>('[data-chat-input]');
+    const submit = root.querySelector<HTMLButtonElement>('[data-chat-submit]');
+    const messages = root.querySelector<HTMLElement>('[data-chat-messages]');
+    const status = root.querySelector<HTMLElement>('[data-chat-status]');
+    const verification = root.querySelector<HTMLElement>(
+      '[data-chat-verification]',
+    );
+    let turnstileToken = '';
+    let widgetId = '';
+    let ready = false;
+    const sessionId =
+      sessionStorage.getItem('portfolio-chat-session') ||
+      `${crypto.randomUUID().replaceAll('-', '')}_${Date.now().toString(36)}`;
+    sessionStorage.setItem('portfolio-chat-session', sessionId);
+
+    const setOpen = (open: boolean) => {
+      if (!toggle || !panel) return;
+      panel.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      if (open) window.setTimeout(() => input?.focus(), 50);
+    };
+    const addMessage = (
+      text: string,
+      role: 'assistant' | 'visitor',
+      citations: Array<{ title: string; url: string }> = [],
+    ) => {
+      if (!messages) return;
+      const article = document.createElement('article');
+      article.className = `chat-message chat-message-${role}`;
+      const paragraph = document.createElement('p');
+      paragraph.textContent = text;
+      article.append(paragraph);
+      if (citations.length) {
+        const sources = document.createElement('div');
+        sources.className = 'chat-sources';
+        const label = document.createElement('span');
+        label.textContent = 'Sources:';
+        sources.append(label);
+        for (const citation of citations) {
+          const link = document.createElement('a');
+          link.href = citation.url;
+          link.textContent = citation.title;
+          sources.append(link);
+        }
+        article.append(sources);
+      }
+      messages.append(article);
+      messages.scrollTop = messages.scrollHeight;
+    };
+    const updateSubmit = () => {
+      if (submit) submit.disabled = !ready || !turnstileToken;
+    };
+    const loadTurnstile = async (sitekey: string) => {
+      await new Promise<void>((resolve, reject) => {
+        if (window.turnstile) return resolve();
+        const existing = document.querySelector<HTMLScriptElement>(
+          'script[src^="https://challenges.cloudflare.com/turnstile/v0/api.js"]',
+        );
+        if (existing) {
+          existing.addEventListener('load', () => resolve(), { once: true });
+          existing.addEventListener(
+            'error',
+            () => reject(new Error('Verification failed to load')),
+            { once: true },
+          );
+          return;
+        }
+        const script = document.createElement('script');
+        script.src =
+          'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Verification failed to load'));
+        document.head.append(script);
+      });
+      if (!verification || !window.turnstile)
+        throw new Error('Verification unavailable');
+      verification.replaceChildren();
+      widgetId = window.turnstile.render(verification, {
+        sitekey,
+        theme: 'auto',
+        size: 'flexible',
+        callback: (token) => {
+          turnstileToken = token;
+          updateSubmit();
+        },
+        'expired-callback': () => {
+          turnstileToken = '';
+          updateSubmit();
+        },
+        'error-callback': () => {
+          turnstileToken = '';
+          if (status)
+            status.textContent =
+              'Verification failed. Please refresh and try again.';
+          updateSubmit();
+        },
+      });
+    };
+    const initialize = async () => {
+      try {
+        const response = await fetch('/api/chat', {
+          headers: { accept: 'application/json' },
+        });
+        const config = (await response.json()) as ChatConfig;
+        if (!response.ok || !config.available || !config.turnstileSiteKey) {
+          throw new Error('Assistant unavailable');
+        }
+        ready = true;
+        await loadTurnstile(config.turnstileSiteKey);
+      } catch {
+        if (verification)
+          verification.textContent = 'Assistant temporarily unavailable.';
+        if (status) status.textContent = 'Please use the contact page instead.';
+      }
+    };
+
+    toggle?.addEventListener('click', () =>
+      setOpen(panel ? panel.hasAttribute('hidden') : true),
+    );
+    document
+      .querySelectorAll<HTMLElement>('[data-chat-open]')
+      .forEach((opener) =>
+        opener.addEventListener('click', () => setOpen(true)),
+      );
+    close?.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && panel && !panel.hidden) setOpen(false);
+    });
+    root
+      .querySelectorAll<HTMLButtonElement>('[data-chat-prompt]')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          if (input) input.value = button.dataset.chatPrompt || '';
+          input?.focus();
+        });
+      });
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const question = input?.value.trim() || '';
+      if (!question || !turnstileToken || !submit) return;
+      const data = new FormData(form);
+      addMessage(question, 'visitor');
+      input!.value = '';
+      submit.disabled = true;
+      if (status) status.textContent = 'Reviewing approved portfolio sources…';
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            accept: 'application/json',
+          },
+          body: JSON.stringify({
+            question,
+            turnstileToken,
+            sessionId,
+            website: data.get('website') || '',
+          }),
+        });
+        const result = (await response.json()) as {
+          answer?: string;
+          citations?: Array<{ title: string; url: string }>;
+          error?: string;
+        };
+        if (!response.ok || !result.answer)
+          throw new Error(result.error || 'Request failed');
+        addMessage(result.answer, 'assistant', result.citations || []);
+        if (status) status.textContent = '';
+      } catch (error) {
+        addMessage(
+          error instanceof Error
+            ? error.message
+            : 'The assistant could not answer right now.',
+          'assistant',
+        );
+        if (status) status.textContent = '';
+      } finally {
+        turnstileToken = '';
+        if (widgetId && window.turnstile) window.turnstile.reset(widgetId);
+        updateSubmit();
+      }
+    });
+    void initialize();
+  }
+</script>
