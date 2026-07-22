@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import tarfile
@@ -30,18 +31,24 @@ def git_revision(source: Path) -> str:
 
 
 def download_source() -> tuple[Path, str, tempfile.TemporaryDirectory[str]]:
+    token = os.environ.get("WEBSITE_REPO_TOKEN", "")
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "agent-web-sync",
+    }
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
     commit_url = f"https://api.github.com/repos/{REPOSITORY}/commits/main"
-    request = urllib.request.Request(
-        commit_url,
-        headers={"Accept": "application/vnd.github+json", "User-Agent": "agent-web-sync"},
-    )
+    request = urllib.request.Request(commit_url, headers=headers)
     with urllib.request.urlopen(request) as response:
         revision = json.load(response)["sha"]
 
     temporary = tempfile.TemporaryDirectory()
     archive_path = Path(temporary.name) / "source.tar.gz"
     archive_url = f"https://api.github.com/repos/{REPOSITORY}/tarball/{revision}"
-    urllib.request.urlretrieve(archive_url, archive_path)
+    archive_request = urllib.request.Request(archive_url, headers=headers)
+    with urllib.request.urlopen(archive_request) as response:
+        archive_path.write_bytes(response.read())
     with tarfile.open(archive_path) as archive:
         archive.extractall(temporary.name, filter="data")
     source = next(path for path in Path(temporary.name).iterdir() if path.is_dir())
