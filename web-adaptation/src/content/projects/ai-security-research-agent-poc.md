@@ -2,6 +2,7 @@
 title: AI Security Research Agent POC
 eyebrow: Agentic AI / Security research
 summary: I built a read-only AI agent that researches one domain, shows its sources, and explains how it reached a verdict.
+type: demo
 featured: true
 order: 1
 technologies:
@@ -24,6 +25,7 @@ results:
 diagram: research-agent
 demo: domain-research
 sourceUrl: https://github.com/sdontogan/security-research-agent-poc
+liveNote: Live agent — queries public DNS, registration, and certificate data in real time; VirusTotal enrichment is optional.
 ---
 
 ## Why I built it

@@ -108,17 +108,17 @@
         <p class="eyebrow">Agent progress</p>
         <h3>Building the evidence record…</h3>
         <ol>
-          <li data-research-stage="validate"><span>01</span>Validate domain</li>
-          <li data-research-stage="sources">
-            <span>02</span>Consult passive sources
+          <li data-research-stage="dns"><span>01</span>Check DNS records</li>
+          <li data-research-stage="rdap">
+            <span>02</span>Check registration data
           </li>
-          <li data-research-stage="normalize">
-            <span>03</span>Normalize evidence
+          <li data-research-stage="ct"><span>03</span>Check certificates</li>
+          <li data-research-stage="vt">
+            <span>04</span>Check optional reputation
           </li>
-          <li data-research-stage="judge">
-            <span>04</span>LLM evidence review
+          <li data-research-stage="llm">
+            <span>05</span>Build the LLM verdict
           </li>
-          <li data-research-stage="report"><span>05</span>Prepare verdict</li>
         </ol>
       </div>
 
@@ -264,6 +264,10 @@
       mode: 'llm' | 'evidence_fallback';
     };
     agentWarning: string | null;
+    degradation: {
+      code: 'virustotal_rate_limited';
+      message: string;
+    } | null;
     sources: EvidenceSource[];
     lexicalFacts: Record<string, string | number | boolean>;
     safeguards: string[];
@@ -355,6 +359,55 @@
                 : 'pending';
         });
     };
+    const cachedExample = (liveResult: ResearchResult): ResearchResult => ({
+      ...liveResult,
+      domain: 'example.com',
+      verdict: {
+        verdict: 'inconclusive',
+        confidence: 25,
+        executive_summary:
+          'This cached example shows the report format while live reputation lookups recover. It is not a current assessment of example.com or the domain you entered.',
+        supporting_evidence: [
+          'A completed report normally compares DNS, registration, certificate, reputation, and lexical evidence.',
+        ],
+        contradicting_evidence: [],
+        uncertainties: [
+          'This is a demonstration fixture; no live sources were queried for this displayed report.',
+        ],
+        recommended_next_steps: [
+          'Wait briefly, then run the live lookup again for the domain you intended to research.',
+        ],
+        sources_used: [],
+        mode: 'evidence_fallback',
+      },
+      agentWarning: liveResult.degradation?.message || null,
+      degradation: null,
+      sources: [
+        {
+          id: 'cached-example',
+          name: 'Cached example',
+          status: 'unavailable',
+          summary:
+            'No live evidence is shown in this fallback. This card demonstrates how source limitations remain visible.',
+          sourceUrl: 'https://example.com',
+          observedAt: '',
+          facts: {},
+          warnings: ['Retry shortly for a live, domain-specific report.'],
+          durationMs: 0,
+        },
+      ],
+      lexicalFacts: {
+        characterCount: 11,
+        labelCount: 2,
+        note: 'Cached demonstration only',
+      },
+      safeguards: [
+        'Clearly labeled cached demonstration',
+        'No live claim is presented as current evidence',
+        'No API key is stored',
+      ],
+      durationMs: 0,
+    });
     const loadTurnstile = async (sitekey: string) => {
       await new Promise<void>((resolve, reject) => {
         if (window.turnstile) return resolve();
@@ -620,7 +673,9 @@
       const progressTimer = window.setInterval(() => {
         progressIndex = Math.min(progressIndex + 1, 4);
         setProgressStage(progressIndex);
-      }, 900);
+      }, 2200);
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 15_000);
       try {
         const response = await fetch('/api/domain-research', {
           method: 'POST',
@@ -635,6 +690,7 @@
             sessionId,
             website: data.get('website') || '',
           }),
+          signal: controller.signal,
         });
         const result = (await response.json()) as ResearchResult & {
           error?: string;
@@ -646,15 +702,22 @@
           );
         }
         setProgressStage(5);
-        renderResult(result);
-        if (status) status.textContent = 'Research report complete.';
+        if (result.degradation?.code === 'virustotal_rate_limited') {
+          renderResult(cachedExample(result));
+          if (status) status.textContent = result.degradation.message;
+        } else {
+          renderResult(result);
+          if (status) status.textContent = 'Research report complete.';
+        }
       } catch (error) {
         if (progress) progress.hidden = true;
         if (empty) empty.hidden = true;
         const message =
-          error instanceof Error
-            ? error.message
-            : 'The research agent could not complete this request.';
+          error instanceof DOMException && error.name === 'AbortError'
+            ? 'The live lookup took longer than 15 seconds. Please try again shortly.'
+            : error instanceof Error && /busy|wait before/i.test(error.message)
+              ? 'The live agent is handling several requests right now. Please try again shortly.'
+              : 'The live lookup could not complete. Please try again shortly.';
         if (errorPanel) {
           errorPanel.hidden = false;
           setText('[data-research-error-message]', message);
@@ -672,6 +735,7 @@
         }
       } finally {
         window.clearInterval(progressTimer);
+        window.clearTimeout(timeout);
         if (keyInput) keyInput.value = '';
         turnstileToken = '';
         if (widgetId && window.turnstile) window.turnstile.reset(widgetId);

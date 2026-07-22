@@ -3,6 +3,7 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
 import CTA from '../../components/CTA.astro';
 import DomainResearchDemo from '../../components/DomainResearchDemo.astro';
+import ProjectTypeBadge from '../../components/ProjectTypeBadge.astro';
 import SkillBadge from '../../components/SkillBadge.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
@@ -32,6 +33,7 @@ const { Content } = await render(project);
         ><span aria-hidden="true">←</span> Back to projects</a
       >
       <p class="eyebrow">{project.data.eyebrow}</p>
+      <ProjectTypeBadge type={project.data.type} />
       <h1>{project.data.title}</h1>
       <div class="case-summary">
         <p>{project.data.summary}</p>
@@ -40,15 +42,34 @@ const { Content } = await render(project);
         </div>
       </div>
       {
-        project.data.sourceUrl && (
-          <div class="hero-actions">
-            <a
-              class="button button-secondary"
-              href={project.data.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              View latest source on GitHub <span aria-hidden="true">↗</span>
+        project.data.type === 'demo' ? (
+          <div class="project-hero-treatment project-demo-treatment">
+            <p>{project.data.liveNote}</p>
+            <div class="hero-actions">
+              <a class="button" href="#live-demo">
+                Try it now
+              </a>
+              {project.data.sourceUrl && (
+                <a
+                  class="button button-secondary"
+                  href={project.data.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View latest source on GitHub <span aria-hidden="true">↗</span>
+                </a>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div class="project-hero-treatment project-case-study-treatment">
+            <strong>Built at {project.data.company}</strong>
+            <p>
+              Proprietary production system—not publicly deployable. Described
+              here from its architecture, measured results, and my role.
+            </p>
+            <a class="text-link" href="#results">
+              Jump to results →
             </a>
           </div>
         )
@@ -82,7 +103,13 @@ const { Content } = await render(project);
       </aside>
       <div class="case-content">
         <article class="prose"><Content /></article>
-        <section class="case-results">
+        <section
+          class:list={[
+            'case-results',
+            project.data.type === 'case-study' && 'case-results-featured',
+          ]}
+          id="results"
+        >
           <h2>Results</h2>
           <ul>{project.data.results.map((result) => <li>{result}</li>)}</ul>
         </section>
@@ -101,13 +128,27 @@ const { Content } = await render(project);
       </div>
     </div>
   </section>
-  <CTA
-    eyebrow="Want to know more?"
-    title="Ask me how I approached the project."
-    text="I’m happy to discuss the architecture, evaluation, failure modes, and tradeoffs behind the system."
-    primaryLabel="Contact Sarah"
-    primaryHref="/contact"
-    secondaryLabel="Recruiter overview"
-    secondaryHref="/recruiter"
-  />
+  {
+    project.data.type === 'case-study' ? (
+      <CTA
+        eyebrow="Case study / Discussion"
+        title="Ask me about the engineering decisions."
+        text="I can discuss my role, architecture, evaluation, safeguards, and operational tradeoffs without sharing proprietary implementation details."
+        primaryLabel="Contact Sarah"
+        primaryHref="/contact"
+        secondaryLabel="Recruiter overview"
+        secondaryHref="/recruiter"
+      />
+    ) : (
+      <CTA
+        eyebrow="Try the live demo"
+        title="Research a public domain."
+        text="The agent uses bounded, read-only sources and shows missing evidence instead of hiding it."
+        primaryLabel="Try it now"
+        primaryHref="#live-demo"
+        secondaryLabel="Contact Sarah"
+        secondaryHref="/contact"
+      />
+    )
+  }
 </BaseLayout>

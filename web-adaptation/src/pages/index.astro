@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import ProjectTypeBadge from '../components/ProjectTypeBadge.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { readingTime } from '../utils/readingTime';
 
@@ -26,12 +27,20 @@ const writing = (await getCollection('writing'))
       <header class="home-intro">
         <div class="home-intro-copy">
           <p class="home-live-label"><span></span> Sarah D’s portfolio</p>
-          <h1>I build AI and machine learning systems for real-world use.</h1>
+          <h1>
+            I build production AI systems that are secure, explainable, and
+            ready for real users.
+          </h1>
           <p>
-            I’m a senior data scientist with experience in cybersecurity,
-            enterprise learning, and knowledge products. Explore my projects,
-            ask about my background, or read my articles.
+            I’m a senior data scientist focused on RAG, machine learning, and
+            the engineering needed to run them reliably.
           </p>
+          <ul class="home-focus-points">
+            <li>Built across cybersecurity and enterprise learning</li>
+            <li>
+              Hands-on projects, practical safeguards, and measured results
+            </li>
+          </ul>
         </div>
         <nav class="home-quick-nav" aria-label="Homepage highlights">
           <a href="#security-agent"><span>01</span> AI research agent</a>
@@ -48,7 +57,7 @@ const writing = (await getCollection('writing'))
         >
           <div class="home-card-topline">
             <span class="home-card-index">01 / FEATURED PROJECT</span>
-            <span class="home-status"><i></i> Try it now</span>
+            <ProjectTypeBadge type="demo" />
           </div>
 
           <div class="home-agent-visual" aria-hidden="true">
@@ -98,8 +107,7 @@ const writing = (await getCollection('writing'))
         >
           <div class="home-card-topline">
             <span class="home-card-index">02 / RAG-BASED LLM AGENT</span>
-            <span class="home-status home-status-muted">Résumé + portfolio</span
-            >
+            <ProjectTypeBadge type="demo" />
           </div>
           <div class="home-chat-preview" aria-hidden="true">
             <p>What has Sarah built with AI?</p>

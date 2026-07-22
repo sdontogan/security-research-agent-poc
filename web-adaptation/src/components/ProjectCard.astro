@@ -1,22 +1,35 @@
 ---
 import SkillBadge from './SkillBadge.astro';
+import ProjectTypeBadge from './ProjectTypeBadge.astro';
 
 interface Props {
   id: string;
   title: string;
   eyebrow: string;
   summary: string;
+  type: 'demo' | 'case-study';
   technologies: string[];
   index?: number;
 }
 
-const { id, title, eyebrow, summary, technologies, index = 1 } = Astro.props;
+const {
+  id,
+  title,
+  eyebrow,
+  summary,
+  type,
+  technologies,
+  index = 1,
+} = Astro.props;
 ---
 
 <article class="project-card">
   <div class="project-card-top">
     <span class="project-index" aria-hidden="true">0{index}</span>
-    <p class="eyebrow">{eyebrow}</p>
+    <div class="project-card-labels">
+      <ProjectTypeBadge type={type} />
+      <p class="eyebrow">{eyebrow}</p>
+    </div>
   </div>
   <h3><a href={`/projects/${id}`}>{title}</a></h3>
   <p>{summary}</p>
@@ -30,8 +43,9 @@ const { id, title, eyebrow, summary, technologies, index = 1 } = Astro.props;
   <a
     class="text-link"
     href={`/projects/${id}`}
-    aria-label={`View project: ${title}`}
+    aria-label={`${type === 'demo' ? 'Try live demo' : 'Read case study'}: ${title}`}
   >
-    View project <span aria-hidden="true">↗</span>
+    {type === 'demo' ? 'Try live demo' : 'Read case study'}
+    <span aria-hidden="true">↗</span>
   </a>
 </article>

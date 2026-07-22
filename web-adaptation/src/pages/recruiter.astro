@@ -1,8 +1,42 @@
 ---
 import SkillBadge from '../components/SkillBadge.astro';
+import ProjectTypeBadge from '../components/ProjectTypeBadge.astro';
 import { siteConfig, targetRoles } from '../config';
-import { skills } from '../data/skills';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const recruiterSkills = {
+  'AI + retrieval': [
+    'RAG',
+    'AI Agents',
+    'Semantic Search',
+    'Knowledge Retrieval',
+    'Pinecone',
+    'OpenSearch',
+  ],
+  'Machine learning': [
+    'scikit-learn',
+    'TF-IDF',
+    'Ensemble Models',
+    'Feature Engineering',
+    'Model Evaluation',
+  ],
+  'Production systems': [
+    'Python',
+    'SQL',
+    'AWS',
+    'Docker',
+    'Kubernetes',
+    'Prometheus',
+    'Sentry',
+  ],
+  'Security data': [
+    'Threat Intelligence',
+    'Phishing Detection',
+    'DNS',
+    'WHOIS',
+    'VirusTotal',
+  ],
+} as const;
 ---
 
 <BaseLayout
@@ -76,9 +110,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <h2>Enterprise learning experience</h2><ul>
           <li>Cisco Learning & Development, 2023–2025</li><li>
             Led the Cisco U. generative AI services team
-          </li><li>Production RAG chatbot on AWS</li><li>
-            Semantic search and enterprise knowledge retrieval
-          </li><li>AI-service quality metrics and product feedback</li>
+          </li><li>
+            Two years building generative-AI services, including a production
+            RAG chatbot on AWS (2023–2025)
+          </li><li>Semantic search and enterprise knowledge retrieval</li><li>
+            AI-service quality metrics and product feedback
+          </li>
         </ul>
       </section>
       <section class="overview-panel">
@@ -92,12 +129,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </section>
       <section class="overview-panel">
         <h2>Key projects</h2><ul>
-          <li>
-            <a href="/projects/ai-security-research-agent-poc"
-              >AI Security Research Agent</a
-            >
+          <li class="recruiter-project-item">
+            <ProjectTypeBadge type="demo" />
+            <a href="/projects/ai-security-research-agent-poc">
+              AI Security Research Agent
+            </a>
           </li>
-          <li>RAG-based LLM portfolio agent with cited answers</li>
+          <li class="recruiter-project-item">
+            <ProjectTypeBadge type="case-study" />
+            <a href="/projects/ml-phishing-domain-detection">
+              ML Phishing Domain Detection
+            </a>
+          </li>
+          <li class="recruiter-project-item">
+            <ProjectTypeBadge type="demo" />
+            <a href="/#portfolio-assistant"> RAG-based LLM portfolio agent </a>
+          </li>
         </ul>
       </section>
       <section class="overview-panel">
@@ -117,7 +164,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </p>
         <div class="skills-columns recruiter-skills-columns">
           {
-            Object.entries(skills).map(([group, items]) => (
+            Object.entries(recruiterSkills).map(([group, items]) => (
               <section class="skills-group">
                 <h3>{group}</h3>
                 <div class="badge-list">

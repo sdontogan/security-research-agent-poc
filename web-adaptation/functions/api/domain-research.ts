@@ -962,6 +962,9 @@ export async function onRequestPost({ request, env }: Context) {
   const sources = [dns, rdap, certificates, virustotal];
   const lexical = lexicalFacts(domain);
   const synthesis = await synthesizeVerdict(env, domain, sources, lexical);
+  const virusTotalRateLimited =
+    virustotal.status === 'unavailable' &&
+    virustotal.summary === 'The VirusTotal key has reached its request limit.';
 
   return json({
     requestId,
@@ -970,6 +973,13 @@ export async function onRequestPost({ request, env }: Context) {
     model: MODEL,
     verdict: synthesis.verdict,
     agentWarning: synthesis.error,
+    degradation: virusTotalRateLimited
+      ? {
+          code: 'virustotal_rate_limited',
+          message:
+            'Live VirusTotal lookups are rate-limited right now. Showing a cached example report instead; try your domain again shortly.',
+        }
+      : null,
     sources,
     lexicalFacts: lexical,
     safeguards: [

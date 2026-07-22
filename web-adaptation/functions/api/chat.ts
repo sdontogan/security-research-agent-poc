@@ -318,7 +318,7 @@ export async function onRequestPost({ request, env }: Context) {
 
   if (PROJECTS_PATTERN.test(question)) {
     return answerResponse(
-      'Three projects are demonstrated directly on this portfolio: a production ML phishing-domain detection system with a multi-stage verification safety net, a RAG-based LLM agent that answers questions about Sarah’s public professional background with citations, and a read-only AI domain-research agent that gathers passive evidence and explains a bounded security verdict. Her résumé also covers production RAG for Cisco U., security-data analysis, and an Atlassian MCP connector for knowledge retrieval.',
+      'The portfolio separates runnable demos from proprietary work: the ML phishing-domain detection system is a production case study with measured results, while the cited RAG portfolio agent and read-only AI domain-research agent are live demos. Her résumé also covers production RAG for Cisco U., security-data analysis, and an Atlassian MCP connector for knowledge retrieval.',
       [
         {
           title: 'ML Phishing Domain Detection',

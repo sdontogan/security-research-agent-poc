@@ -17,14 +17,9 @@ export const siteConfig = {
 } as const;
 
 export const targetRoles = [
-  // EDIT ME: Reorder or remove roles to match the search.
   'Senior Data Scientist',
   'Senior Machine Learning Engineer',
-  'Applied Scientist',
-  'AI Security Engineer',
-  'AI Security Researcher',
   'Applied AI Engineer',
-  'Principal AI Technologist',
 ] as const;
 
 export const navigation = [
