@@ -3,6 +3,7 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
 import CTA from '../../components/CTA.astro';
 import DomainResearchDemo from '../../components/DomainResearchDemo.astro';
+import PhishingDetectionVisual from '../../components/PhishingDetectionVisual.astro';
 import ProjectTypeBadge from '../../components/ProjectTypeBadge.astro';
 import SkillBadge from '../../components/SkillBadge.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -76,6 +77,14 @@ const { Content } = await render(project);
       }
     </div>
   </header>
+
+  {
+    project.data.visual === 'phishing-detection' && (
+      <section class="container-wide section-tight">
+        <PhishingDetectionVisual />
+      </section>
+    )
+  }
 
   {
     project.data.demo === 'domain-research' && (
