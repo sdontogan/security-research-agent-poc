@@ -115,7 +115,7 @@ until that one-time secret is configured.
 The reverse direction is automated too. The `sync live web adaptation` workflow checks
 the public Beyond Features repository every 15 minutes and mirrors the live Cloudflare
 Functions, domain-research and RAG interfaces, retrieval knowledge, project copy,
-homepage integration, and styles into
+portfolio pages, shared configuration, and styles into
 [`web-adaptation/`](web-adaptation/). Its `source.json` file records the exact portfolio
 commit represented by the mirror. The Python/Streamlit implementation remains the source
 of truth for shared contracts; the mirror makes the deployed web-specific code visible in

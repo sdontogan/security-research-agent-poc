@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import CTA from '../../components/CTA.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<BaseLayout
+  title="Projects"
+  description="A working AI research-agent prototype from Sarah D, with a live demo, architecture, source code, and an explanation of the decisions behind it."
+>
+  <header class="page-hero">
+    <div class="container-wide">
+      <p class="eyebrow page-kicker">Projects / Selected work</p>
+      <h1>Applied AI that you can try and inspect.</h1>
+      <p class="page-lede">
+        The featured project is a live domain-research agent. You can try it,
+        inspect the architecture and source code, and see how I handled safety,
+        uncertainty, and real-world constraints.
+      </p>
+    </div>
+  </header>
+  <section class="section">
+    <div class="container-wide projects-list">
+      {
+        projects.map((project, index) => (
+          <ProjectCard id={project.id} index={index + 1} {...project.data} />
+        ))
+      }
+    </div>
+  </section>
+  <CTA
+    eyebrow="A quick scan"
+    title="Review the experience in under one minute."
+    text="The recruiter overview connects this project to my wider experience in production AI, enterprise learning, knowledge systems, and cybersecurity."
+    primaryLabel="Recruiter overview"
+    primaryHref="/recruiter"
+    secondaryLabel="Download résumé"
+    secondaryHref="/Sarah_D_Resume_2026.docx"
+  />
+</BaseLayout>

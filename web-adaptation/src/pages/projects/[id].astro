@@ -1,0 +1,111 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
+import CTA from '../../components/CTA.astro';
+import DomainResearchDemo from '../../components/DomainResearchDemo.astro';
+import SkillBadge from '../../components/SkillBadge.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { id: project.id },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<BaseLayout
+  title={project.data.title}
+  description={project.data.summary}
+  type="article"
+>
+  <header class="case-hero">
+    <div class="container-wide">
+      <a class="back-link" href="/projects"
+        ><span aria-hidden="true">←</span> Back to projects</a
+      >
+      <p class="eyebrow">{project.data.eyebrow}</p>
+      <h1>{project.data.title}</h1>
+      <div class="case-summary">
+        <p>{project.data.summary}</p>
+        <div class="case-meta">
+          <span>Working prototype</span><strong
+            >Live demo · Architecture · Source code</strong
+          >
+        </div>
+      </div>
+      {
+        project.data.sourceUrl && (
+          <div class="hero-actions">
+            <a
+              class="button button-secondary"
+              href={project.data.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View latest source on GitHub <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        )
+      }
+    </div>
+  </header>
+
+  {
+    project.data.demo === 'domain-research' && (
+      <section class="container-wide section-tight">
+        <DomainResearchDemo />
+      </section>
+    )
+  }
+
+  <section class="container-wide section-tight">
+    <ArchitectureDiagram type={project.data.diagram} />
+  </section>
+
+  <section class="section">
+    <div class="container case-layout">
+      <aside class="case-sidebar">
+        <h2>Technology stack</h2>
+        <div class="badge-list">
+          {project.data.technologies.map((item) => <SkillBadge label={item} />)}
+        </div>
+      </aside>
+      <div class="case-content">
+        <article class="prose"><Content /></article>
+        <section class="case-results">
+          <h2>Results</h2>
+          <ul>{project.data.results.map((result) => <li>{result}</li>)}</ul>
+        </section>
+        <section class="case-results">
+          <h2>Key challenges</h2>
+          <ul>
+            {project.data.challenges.map((challenge) => <li>{challenge}</li>)}
+          </ul>
+        </section>
+        <a
+          class="back-link"
+          href="/projects"
+          style="margin-top: 3rem; margin-bottom: 0;"
+          ><span aria-hidden="true">←</span> Back to all projects</a
+        >
+      </div>
+    </div>
+  </section>
+  <CTA
+    eyebrow="Want to know more?"
+    title="Ask me how I approached the project."
+    text="I’m happy to discuss the architecture, evaluation, failure modes, and tradeoffs behind the prototype."
+    primaryLabel="Contact Sarah"
+    primaryHref="/contact"
+    secondaryLabel="Recruiter overview"
+    secondaryHref="/recruiter"
+  />
+</BaseLayout>

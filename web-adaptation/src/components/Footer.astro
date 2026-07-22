@@ -1,0 +1,26 @@
+---
+import { siteConfig } from '../config';
+import Logo from './Logo.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container-wide footer-grid">
+    <div>
+      <Logo />
+      <p>Production AI shaped by security, learning, and real-world use.</p>
+    </div>
+    <div class="footer-links" aria-label="Professional profiles">
+      <a href="/contact">Contact</a>
+      <a href={siteConfig.github} target="_blank" rel="noopener noreferrer"
+        >GitHub <span aria-hidden="true">↗</span></a
+      >
+      <a href="/security.txt">Security</a>
+    </div>
+  </div>
+  <div class="container-wide footer-bottom">
+    <span>© {year} {siteConfig.owner}</span>
+    <span>Designed and built with Astro.</span>
+  </div>
+</footer>

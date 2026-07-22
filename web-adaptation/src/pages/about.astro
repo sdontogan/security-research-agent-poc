@@ -1,0 +1,194 @@
+---
+import CTA from '../components/CTA.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import SkillBadge from '../components/SkillBadge.astro';
+import { skills } from '../data/skills';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About Me"
+  description="Meet Sarah D, a senior data scientist whose work spans production machine learning, generative AI, enterprise learning, knowledge systems, and cybersecurity."
+>
+  <header class="about-me-hero">
+    <div class="container-wide about-me-hero-grid">
+      <div class="about-me-intro">
+        <p class="eyebrow">About me</p>
+        <h1>Hi, I’m Sarah.</h1>
+        <p class="about-me-lede">
+          I build AI systems for problems where the data is messy and the answer
+          actually matters.
+        </p>
+        <p>
+          I’m a senior data scientist with roots in cybersecurity. I care less
+          about a flashy demo and more about what happens after it meets real
+          data, real constraints, and the people who have to use the result.
+        </p>
+        <p>
+          My work has moved between security and enterprise learning, with
+          machine learning and production engineering connecting the two. That
+          has included phishing detection, threat intelligence, enterprise RAG,
+          semantic search, and AI products for learning and knowledge access.
+        </p>
+        <div class="about-me-actions">
+          <a class="button" href="/projects/ai-security-research-agent-poc"
+            >See what I’m building</a
+          >
+          <a class="text-link" href="/resume"
+            >View my résumé <span aria-hidden="true">↗</span></a
+          >
+        </div>
+      </div>
+
+      <figure class="about-portrait">
+        <div class="about-portrait-frame">
+          <img
+            src="/images/sarah-d-profile.jpg"
+            alt="Sarah D smiling in a white shirt"
+            width="960"
+            height="1200"
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+        <figcaption>
+          <span>Senior Data Scientist</span>
+          <span>AI · Machine learning · Production systems</span>
+        </figcaption>
+      </figure>
+    </div>
+  </header>
+
+  <section class="section about-path-section">
+    <div class="container about-path">
+      <header class="about-path-heading">
+        <p class="eyebrow">How I got here</p>
+        <h2>My path into AI runs through security and education.</h2>
+      </header>
+
+      <div class="about-chapters">
+        <article class="about-chapter">
+          <span>01</span>
+          <div>
+            <h3>Security taught me to question the easy answer.</h3>
+            <p>
+              At Cisco Talos, I worked with large security datasets,
+              threat-intelligence databases, reporting automation, and phishing
+              detection. I saw analysts face the same classification problems
+              over and over, and started using machine learning to make that
+              work more consistent and scalable.
+            </p>
+          </div>
+        </article>
+
+        <article class="about-chapter">
+          <span>02</span>
+          <div>
+            <h3>Education AI pulled me closer to the product.</h3>
+            <p>
+              At Cisco Learning & Development, I led a generative AI services
+              team and helped build a production RAG assistant on AWS for Cisco
+              U. The work included semantic search, knowledge retrieval,
+              telemetry, and user feedback—the parts that turn a promising model
+              into a useful learning product.
+            </p>
+          </div>
+        </article>
+
+        <article class="about-chapter">
+          <span>03</span>
+          <div>
+            <h3>Today, I’m bringing those two paths together.</h3>
+            <p>
+              At ThreatSTOP, I work on machine-learning pipelines for phishing
+              detection in DNS traffic. I’m also exploring AI agents that can
+              gather evidence, explain their reasoning, and be honest about what
+              they do not know—an approach that applies well beyond security.
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section surface-section">
+    <div class="container-wide">
+      <SectionHeading eyebrow="How I work" title="A few things I care about." />
+      <div class="philosophy-grid about-values">
+        <article class="philosophy-card">
+          <h3>I ask what happens on a bad day.</h3><p>
+            Missing fields, stale data, changing behavior, API limits, and false
+            positives are part of the design—not cleanup for later.
+          </p>
+        </article>
+        <article class="philosophy-card">
+          <h3>I don’t hide uncertainty.</h3><p>
+            A useful system should show its evidence, its limits, and why it
+            reached a conclusion. Confidence is context, not decoration.
+          </p>
+        </article>
+        <article class="philosophy-card">
+          <h3>The handoff matters.</h3><p>
+            A technically correct model is not enough. The output has to help a
+            person decide what to do next.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container about-focus">
+      <div>
+        <p class="eyebrow">What I like building</p>
+        <h2>Useful systems, end to end.</h2>
+      </div>
+      <div class="about-focus-copy">
+        <p>
+          I’m happiest when I can follow a problem all the way from raw data to
+          a decision someone can use. That might be a security classifier with
+          layered context, a dependable recurring pipeline, or a knowledge
+          product that gives a grounded answer instead of a confident guess.
+        </p>
+        <p>
+          Right now, I’m especially interested in production ML architecture,
+          retrieval quality, useful AI agents, enterprise knowledge systems, and
+          the security problems where those ideas are especially valuable.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section surface-section">
+    <div class="container-wide">
+      <SectionHeading
+        eyebrow="Skills overview"
+        title="A practical stack for applied AI."
+      />
+      <div class="skills-columns">
+        {
+          Object.entries(skills).map(([group, items]) => (
+            <section class="skills-group">
+              <h3>{group}</h3>
+              <div class="badge-list">
+                {items.map((item) => (
+                  <SkillBadge label={item} />
+                ))}
+              </div>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CTA
+    eyebrow="Want the short version?"
+    title="The résumé has the timeline."
+    text="For a quick view of my roles, experience, and technical background, start there."
+    primaryLabel="View résumé"
+    primaryHref="/resume"
+    secondaryLabel="Recruiter overview"
+    secondaryHref="/recruiter"
+  />
+</BaseLayout>

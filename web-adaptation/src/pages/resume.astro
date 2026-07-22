@@ -1,0 +1,63 @@
+---
+import { siteConfig } from '../config';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Résumé"
+  description="Résumé and professional summary for Sarah D, a senior data scientist with experience in enterprise learning, knowledge systems, AI, machine learning, and cybersecurity."
+>
+  <header class="page-hero">
+    <div class="container-wide">
+      <p class="eyebrow page-kicker">Résumé / Experience snapshot</p>
+      <h1>Applied AI. Machine learning. Production experience.</h1>
+      <p class="page-lede">
+        A career spanning enterprise learning, generative AI services, semantic
+        search, knowledge systems, threat intelligence, phishing detection, and
+        production machine-learning pipelines.
+      </p>
+    </div>
+  </header>
+  <section class="section">
+    <div class="container-wide resume-grid">
+      <aside class="resume-summary">
+        <p class="eyebrow">Résumé files</p>
+        <h2>Preview it here or download a copy.</h2>
+        <p>
+          The preview is easy to read in the browser. Download the DOCX if you
+          would rather keep a copy.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href={siteConfig.resumeDownloadUrl} download
+            >Download DOCX</a
+          >
+          <a
+            class="button button-secondary"
+            href={siteConfig.resumeUrl}
+            target="_blank"
+            rel="noopener noreferrer">Open PDF</a
+          >
+        </div>
+        <p style="font-size: .82rem;">
+          If the preview does not load in your browser, use either button above.
+        </p>
+      </aside>
+      <div class="resume-frame">
+        <a
+          href={siteConfig.resumeUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open Sarah D résumé as a PDF"
+        >
+          <img
+            src="/resume-preview/resume-page-1.png"
+            width="1360"
+            height="1760"
+            loading="eager"
+            alt="One-page résumé preview for Sarah D"
+          />
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

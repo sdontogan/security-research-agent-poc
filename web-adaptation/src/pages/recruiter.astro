@@ -1,0 +1,125 @@
+---
+import SkillBadge from '../components/SkillBadge.astro';
+import { siteConfig, targetRoles } from '../config';
+import { skills } from '../data/skills';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Recruiter Overview"
+  description="A one-minute overview of Sarah D's senior AI and machine-learning experience across enterprise learning, knowledge systems, and cybersecurity."
+>
+  <section class="recruiter-hero">
+    <div class="container-wide">
+      <div class="recruiter-topline">
+        <span>Recruiter overview / Designed for a one-minute review</span><a
+          class="button button-small"
+          href={siteConfig.resumeDownloadUrl}
+          download>Download résumé</a
+        >
+      </div>
+      <div class="recruiter-intro">
+        <div>
+          <p class="eyebrow">
+            {siteConfig.owner} / {siteConfig.currentRole}
+          </p><h1>Production AI across security and enterprise learning.</h1>
+        </div>
+        <p class="summary">
+          Experienced data scientist who has built AI for cybersecurity and
+          enterprise learning. Her work spans feature engineering, model
+          evaluation, data pipelines, AWS deployment, knowledge retrieval,
+          telemetry, and product feedback.
+        </p>
+      </div>
+      <div class="quick-contact">
+        <a class="button" href="/contact">Contact Sarah</a>
+        <a
+          class="button button-secondary"
+          href={siteConfig.github}
+          target="_blank"
+          rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a
+        >
+      </div>
+    </div>
+  </section>
+
+  <section class="section surface-section">
+    <div class="container-wide overview-grid">
+      <section class="overview-panel wide">
+        <p class="eyebrow">Roles that fit my experience</p><div
+          class="role-list"
+        >
+          {targetRoles.map((role) => <span>{role}</span>)}
+        </div>
+      </section>
+      <section class="overview-panel">
+        <h2>Core strengths</h2><ul>
+          <li>Model and feature design for varied data problems</li><li>
+            Production ML and recurring data pipelines
+          </li><li>RAG, semantic search, and knowledge systems</li><li>
+            Technical leadership across AI services
+          </li><li>Operational judgment under real constraints</li>
+        </ul>
+      </section>
+      <section class="overview-panel">
+        <h2>Production experience</h2><ul>
+          <li>Phishing detection pipelines for DNS traffic on AWS</li><li>
+            Ensemble modeling with character-level TF-IDF features
+          </li><li>
+            Production RAG chatbot and generative AI services for Cisco U.
+          </li><li>
+            Semantic search, knowledge retrieval, telemetry, and user feedback
+          </li><li>OpenSearch and S3 for state, artifacts, and workflows</li>
+        </ul>
+      </section>
+      <section class="overview-panel">
+        <h2>Enterprise learning experience</h2><ul>
+          <li>Cisco Learning & Development, 2023–2025</li><li>
+            Led the Cisco U. generative AI services team
+          </li><li>Production RAG chatbot on AWS</li><li>
+            Semantic search and enterprise knowledge retrieval
+          </li><li>AI-service quality metrics and product feedback</li>
+        </ul>
+      </section>
+      <section class="overview-panel">
+        <h2>Cybersecurity experience</h2><ul>
+          <li>Cisco Talos security engineering, 2016–2023</li><li>
+            Phishing URL and domain detection
+          </li><li>Threat-intelligence data and reporting automation</li><li>
+            DNS, WHOIS, VirusTotal, and DGA signals
+          </li><li>Security-team collaboration and mitigation workflows</li>
+        </ul>
+      </section>
+      <section class="overview-panel">
+        <h2>Key projects</h2><ul>
+          <li>
+            <a href="/projects/ai-security-research-agent-poc"
+              >AI Security Research Agent</a
+            >
+          </li>
+        </ul>
+      </section>
+      <section class="overview-panel wide">
+        <h2>Technical stack</h2>
+        <p class="overview-panel-intro">
+          A practical stack spanning applied AI, production systems, knowledge
+          retrieval, analytics, and security.
+        </p>
+        <div class="skills-columns recruiter-skills-columns">
+          {
+            Object.entries(skills).map(([group, items]) => (
+              <section class="skills-group">
+                <h3>{group}</h3>
+                <div class="badge-list">
+                  {items.map((item) => (
+                    <SkillBadge label={item} />
+                  ))}
+                </div>
+              </section>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+  </section>
+</BaseLayout>

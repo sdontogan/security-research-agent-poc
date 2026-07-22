@@ -1,0 +1,80 @@
+---
+import { getCollection } from 'astro:content';
+import ArticleCard from '../../components/ArticleCard.astro';
+import CTA from '../../components/CTA.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { readingTime } from '../../utils/readingTime';
+
+const entries = await getCollection('writing');
+const published = entries
+  .filter((entry) => !entry.data.draft)
+  .sort(
+    (first, second) =>
+      new Date(second.data.date).getTime() -
+      new Date(first.data.date).getTime(),
+  );
+const drafts = entries.filter((entry) => entry.data.draft);
+---
+
+<BaseLayout
+  title="Writing"
+  description="Field notes on machine learning, threat detection, production AI, and AI security."
+>
+  <header class="page-hero">
+    <div class="container-wide">
+      <p class="eyebrow page-kicker">Writing / Field notes</p>
+      <h1>What I’ve learned from building machine-learning systems.</h1>
+      <p class="page-lede">
+        Practical writing on security-focused machine learning, production
+        threat detection, retrieval, and the technical judgment that connects
+        them.
+      </p>
+    </div>
+  </header>
+  <section class="section">
+    <div class="container-wide">
+      {
+        published.length > 0 ? (
+          <div class="article-grid">
+            {published.map((entry) => (
+              <ArticleCard
+                id={entry.id}
+                {...entry.data}
+                readingTime={
+                  entry.data.readingMinutes || readingTime(entry.body)
+                }
+              />
+            ))}
+          </div>
+        ) : (
+          <div class="draft-notice">
+            <p class="eyebrow">Editorial queue</p>
+            <h2>First field notes are in progress.</h2>
+            <p style="margin-top: 1rem; max-width: 42rem;">
+              Drafts stay out of the public article routes until they are
+              complete. Their source files include outlines, reading-time
+              support, tags, and clearly marked sections ready for development.
+            </p>
+            <div class="draft-list">
+              {drafts.map((entry) => (
+                <div class="draft-item">
+                  <strong>{entry.data.title}</strong>
+                  <span>Draft</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+  <CTA
+    eyebrow="See the work in practice"
+    title="Try the live AI research agent."
+    text="See how I approached the architecture, safety boundaries, evidence, and user experience behind the working prototype."
+    primaryLabel="View project"
+    primaryHref="/projects"
+    secondaryLabel="About Me"
+    secondaryHref="/about"
+  />
+</BaseLayout>
