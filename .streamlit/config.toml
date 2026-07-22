@@ -1,0 +1,16 @@
+[theme]
+base = "light"
+primaryColor = "#0F766E"
+backgroundColor = "#F6F3EB"
+secondaryBackgroundColor = "#ECE9DF"
+textColor = "#14201D"
+font = "sans serif"
+
+[server]
+headless = true
+address = "127.0.0.1"
+maxUploadSize = 1
+maxMessageSize = 1
+
+[browser]
+gatherUsageStats = false
