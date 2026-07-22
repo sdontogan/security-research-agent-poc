@@ -96,13 +96,21 @@ chat message
     -> retrieve passive DNS, RDAP, and certificate evidence
     -> optionally retrieve its existing VirusTotal domain report
     -> bound and normalize the evidence
-    -> apply a transparent priority rule
-    -> optionally ask OpenAI for a short interpretation
-    -> display the deterministic assessment and evidence trace
+    -> apply deterministic safety guardrails
+    -> optionally ask an LLM for an evidence-grounded verdict
+    -> display the assessment, confidence, and evidence trace
 ```
 
 The model cannot select another endpoint, execute a command, fetch an arbitrary URL, or
 change an external system.
+
+## Portfolio synchronization
+
+The portfolio imports the versioned files in `security_research_agent/contracts/` during
+its Cloudflare Pages build. Add the portfolio project's Cloudflare deploy-hook URL as the
+`PORTFOLIO_DEPLOY_HOOK` GitHub Actions secret in this repository to rebuild the live demo
+automatically after a tested push to `main`. The workflow safely skips the deploy step
+until that one-time secret is configured.
 
 ## Data source
 

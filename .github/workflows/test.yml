@@ -19,3 +19,14 @@ jobs:
       - run: pip install -r requirements-dev.txt
       - run: ruff check .
       - run: pytest
+
+  refresh-portfolio:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      PORTFOLIO_DEPLOY_HOOK: ${{ secrets.PORTFOLIO_DEPLOY_HOOK }}
+    steps:
+      - name: Trigger the portfolio build
+        if: env.PORTFOLIO_DEPLOY_HOOK != ''
+        run: curl --fail --silent --show-error --request POST "$PORTFOLIO_DEPLOY_HOOK"

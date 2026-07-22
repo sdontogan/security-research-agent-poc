@@ -233,10 +233,14 @@ st.markdown(
     <div class="instruction-card">
       <strong>What you can do</strong><br>
       Enter one bare public domain, such as <code>example.com</code>. The app retrieves
-      its existing VirusTotal domain report. URLs, IP addresses, CVEs, hashes, email
-      addresses, and internal domains are intentionally rejected.
+      passive DNS, registration, and certificate evidence, plus an existing VirusTotal
+      report when that connection is available. URLs, IP addresses, CVEs, hashes,
+      email addresses, and internal domains are intentionally rejected.
       <div class="tool-row">
-        <span class="tool-chip">VirusTotal domains</span>
+        <span class="tool-chip">Cloudflare DNS</span>
+        <span class="tool-chip">RDAP</span>
+        <span class="tool-chip">Certificate Transparency</span>
+        <span class="tool-chip">VirusTotal (optional)</span>
         <span class="tool-chip">OpenAI (optional)</span>
       </div>
     </div>
