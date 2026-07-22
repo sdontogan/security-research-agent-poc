@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": "cloudflare_dns",
+      "name": "Cloudflare DNS",
+      "required": true,
+      "access": "no_key",
+      "mode": "passive",
+      "facts": ["A", "AAAA", "MX", "NS"]
+    },
+    {
+      "id": "rdap",
+      "name": "RDAP registration data",
+      "required": true,
+      "access": "no_key",
+      "mode": "passive",
+      "facts": ["registration date", "expiration date", "registrar", "status"]
+    },
+    {
+      "id": "certificate_transparency",
+      "name": "Certificate Transparency",
+      "required": true,
+      "access": "no_key",
+      "mode": "passive",
+      "facts": ["certificate count", "first observed", "last observed", "issuers"]
+    },
+    {
+      "id": "virustotal",
+      "name": "VirusTotal",
+      "required": false,
+      "access": "visitor_key",
+      "mode": "existing_report_only",
+      "facts": ["malicious detections", "suspicious detections", "reputation", "tags"]
+    }
+  ]
+}

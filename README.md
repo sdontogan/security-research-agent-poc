@@ -30,6 +30,7 @@ tested in both runtimes.
 
 - A local Streamlit chat interface focused only on public domains
 - VirusTotal and optional OpenAI keys from the sidebar or a `.env` file
+- Passive DNS, RDAP registration, and Certificate Transparency lookups
 - Existing VirusTotal domain-report lookups without submitting content for scanning
 - Optional OpenAI interpretation after deterministic validation and scoring
 - A deterministic report when no OpenAI key is configured
@@ -92,7 +93,8 @@ to either service.
 chat message
     -> reject non-domain and mixed input shapes
     -> normalize exactly one public domain
-    -> retrieve its existing VirusTotal domain report
+    -> retrieve passive DNS, RDAP, and certificate evidence
+    -> optionally retrieve its existing VirusTotal domain report
     -> bound and normalize the evidence
     -> apply a transparent priority rule
     -> optionally ask OpenAI for a short interpretation

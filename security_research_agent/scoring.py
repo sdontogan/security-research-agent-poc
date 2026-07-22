@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from .contracts import load_json
 from .models import Priority, ToolEvidence
 
 
 def assess_priority(evidence: list[ToolEvidence]) -> tuple[Priority, list[str]]:
+    thresholds = load_json("agent-policy.json")["priority_thresholds"]
     successful = [item for item in evidence if item.status == "success"]
     if not successful:
         return Priority.UNKNOWN, ["No usable evidence was returned."]
@@ -19,9 +21,11 @@ def assess_priority(evidence: list[ToolEvidence]) -> tuple[Priority, list[str]]:
         )
     except (TypeError, ValueError):
         return Priority.UNKNOWN, ["The returned detection counts were not usable."]
-    if malicious >= 5:
+    if malicious >= int(thresholds["high_malicious_detections"]):
         return Priority.HIGH, [f"VirusTotal reports {malicious} malicious detections."]
-    if malicious >= 1 or suspicious >= 1:
+    if malicious >= int(thresholds["medium_malicious_detections"]) or suspicious >= int(
+        thresholds["medium_suspicious_detections"]
+    ):
         return Priority.MEDIUM, [
             f"VirusTotal reports {malicious} malicious and {suspicious} suspicious detections."
         ]

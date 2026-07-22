@@ -36,13 +36,39 @@ def get_json(
     headers: dict[str, str] | None = None,
     params: dict[str, str] | None = None,
     max_bytes: int = DEFAULT_MAX_UPSTREAM_BYTES,
+    follow_redirects: bool = False,
 ) -> dict[str, Any]:
+    payload = get_json_value(
+        url,
+        timeout_seconds=timeout_seconds,
+        headers=headers,
+        params=params,
+        max_bytes=max_bytes,
+        follow_redirects=follow_redirects,
+    )
+    if not isinstance(payload, dict):
+        raise ToolRequestError("The upstream response had an unexpected shape.")
+    return payload
+
+
+def get_json_value(
+    url: str,
+    *,
+    timeout_seconds: int,
+    headers: dict[str, str] | None = None,
+    params: dict[str, str] | None = None,
+    max_bytes: int = DEFAULT_MAX_UPSTREAM_BYTES,
+    follow_redirects: bool = False,
+) -> Any:
     try:
-        with httpx.Client(
-            timeout=timeout_seconds,
-            follow_redirects=False,
-            headers={"User-Agent": "security-research-agent-poc/0.1"},
-        ) as client, client.stream("GET", url, headers=headers, params=params) as response:
+        with (
+            httpx.Client(
+                timeout=timeout_seconds,
+                follow_redirects=follow_redirects,
+                headers={"User-Agent": "security-research-agent-poc/0.1"},
+            ) as client,
+            client.stream("GET", url, headers=headers, params=params) as response,
+        ):
             response.raise_for_status()
             chunks: list[bytes] = []
             total = 0
@@ -57,8 +83,6 @@ def get_json(
     except (httpx.HTTPError, json.JSONDecodeError) as exc:
         raise ToolRequestError("The upstream service did not return usable data.") from exc
 
-    if not isinstance(payload, dict):
-        raise ToolRequestError("The upstream response had an unexpected shape.")
     return payload
 
 

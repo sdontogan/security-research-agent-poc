@@ -8,8 +8,13 @@ from security_research_agent.tools.base import ToolContext
 DEMO_CONTEXT = ToolContext(api_keys=ApiKeys(), demo_mode=True)
 
 
-def test_registry_contains_only_domain_connector() -> None:
-    assert set(TOOLS) == {"lookup_virustotal"}
+def test_registry_contains_only_allowlisted_domain_connectors() -> None:
+    assert set(TOOLS) == {
+        "lookup_dns",
+        "lookup_rdap",
+        "lookup_certificates",
+        "lookup_virustotal",
+    }
 
 
 def test_demo_domain_does_not_need_a_key() -> None:
@@ -20,6 +25,14 @@ def test_demo_domain_does_not_need_a_key() -> None:
 
     assert result.status == "success"
     assert result.data["domain"] == "example.com"
+    assert result.data["fixture"] is True
+
+
+@pytest.mark.parametrize("tool_name", ["lookup_dns", "lookup_rdap", "lookup_certificates"])
+def test_baseline_demo_sources_do_not_need_keys(tool_name: str) -> None:
+    result = TOOLS[tool_name].run({"domain": "example.com"}, DEMO_CONTEXT)
+
+    assert result.status == "success"
     assert result.data["fixture"] is True
 
 

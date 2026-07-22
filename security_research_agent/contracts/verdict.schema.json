@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Domain research verdict",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "likely_malicious",
+        "suspicious",
+        "no_current_threat_evidence",
+        "inconclusive"
+      ]
+    },
+    "confidence": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "executive_summary": { "type": "string", "maxLength": 900 },
+    "supporting_evidence": {
+      "type": "array",
+      "maxItems": 6,
+      "items": { "type": "string", "maxLength": 300 }
+    },
+    "contradicting_evidence": {
+      "type": "array",
+      "maxItems": 6,
+      "items": { "type": "string", "maxLength": 300 }
+    },
+    "uncertainties": {
+      "type": "array",
+      "maxItems": 6,
+      "items": { "type": "string", "maxLength": 300 }
+    },
+    "recommended_next_steps": {
+      "type": "array",
+      "maxItems": 5,
+      "items": { "type": "string", "maxLength": 300 }
+    },
+    "sources_used": {
+      "type": "array",
+      "maxItems": 8,
+      "items": { "type": "string", "maxLength": 80 }
+    }
+  },
+  "required": [
+    "verdict",
+    "confidence",
+    "executive_summary",
+    "supporting_evidence",
+    "contradicting_evidence",
+    "uncertainties",
+    "recommended_next_steps",
+    "sources_used"
+  ]
+}

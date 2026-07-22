@@ -16,8 +16,13 @@ def test_demo_agent_returns_domain_evidence_without_keys() -> None:
 
     assert result.mode == "demo"
     assert result.priority == Priority.MEDIUM
-    assert len(result.evidence) == 1
-    assert result.tools_used == ["lookup_virustotal"]
+    assert len(result.evidence) == 4
+    assert result.tools_used == [
+        "lookup_dns",
+        "lookup_rdap",
+        "lookup_certificates",
+        "lookup_virustotal",
+    ]
     assert "VirusTotal demo fixture" in result.message
 
 
@@ -74,7 +79,7 @@ def test_safety_help_does_not_need_openai() -> None:
     result = SecurityResearchAgent().run("Explain the safety limits", api_keys=ApiKeys())
 
     assert "Safety limits" in result.message
-    assert "one fixed" in result.message
+    assert "fixed registry" in result.message
     assert "cannot run shell commands" in result.message
 
 
