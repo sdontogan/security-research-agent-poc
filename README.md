@@ -112,6 +112,14 @@ its Cloudflare Pages build. Add the portfolio project's Cloudflare deploy-hook U
 automatically after a tested push to `main`. The workflow safely skips the deploy step
 until that one-time secret is configured.
 
+The reverse direction is automated too. The `sync live web adaptation` workflow checks
+the public Beyond Features repository every 15 minutes and mirrors the live Cloudflare
+Function, browser interface, project copy, generated contract, and styles into
+[`web-adaptation/`](web-adaptation/). Its `source.json` file records the exact portfolio
+commit represented by the mirror. The Python/Streamlit implementation remains the source
+of truth for shared contracts; the mirror makes the deployed web-specific code visible in
+this repository without creating a second editable copy.
+
 ## Data source
 
 - [VirusTotal API v3](https://docs.virustotal.com/reference/overview)

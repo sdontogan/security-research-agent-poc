@@ -1,0 +1,691 @@
+<section
+  class="research-demo"
+  id="live-demo"
+  aria-labelledby="research-demo-title"
+>
+  <div class="research-demo-intro">
+    <div>
+      <p class="eyebrow">Live multi-source agent</p>
+      <h2 id="research-demo-title">Research one public domain.</h2>
+    </div>
+    <p>
+      The agent collects passive DNS, registration, and certificate evidence,
+      then an LLM compares the sources and returns a bounded verdict. An
+      optional VirusTotal key adds an existing reputation report—never a scan.
+    </p>
+  </div>
+
+  <div class="research-workbench" data-research-root>
+    <form class="research-form" data-research-form>
+      <div class="research-field">
+        <label for="research-domain">Public domain</label>
+        <input
+          id="research-domain"
+          name="domain"
+          type="text"
+          inputmode="url"
+          maxlength="253"
+          value="example.com"
+          placeholder="example.com"
+          spellcheck="false"
+          autocapitalize="none"
+          autocomplete="off"
+          required
+          data-research-domain
+        />
+        <small
+          >One bare domain only—no URLs, paths, IPs, or internal names.</small
+        >
+      </div>
+
+      <div
+        class="research-source-preview"
+        aria-label="Baseline research sources"
+      >
+        <span>Cloudflare DNS</span><span>RDAP</span><span>Certificates</span
+        ><span>Workers AI</span>
+      </div>
+
+      <details class="research-connection">
+        <summary>Optional: add VirusTotal reputation</summary>
+        <div class="research-field">
+          <label for="research-vt-key">VirusTotal API key</label>
+          <input
+            id="research-vt-key"
+            name="virustotalApiKey"
+            type="password"
+            maxlength="256"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Not required"
+            data-research-key
+          />
+          <small>
+            Sent over HTTPS for this lookup only, then cleared. Use a limited,
+            revocable key and follow <a
+              href="https://docs.virustotal.com/reference/public-vs-premium-api"
+              target="_blank"
+              rel="noopener noreferrer">VirusTotal’s API terms</a
+            >.
+          </small>
+        </div>
+      </details>
+
+      <input
+        class="chat-honeypot"
+        type="text"
+        name="website"
+        tabindex="-1"
+        autocomplete="off"
+        aria-hidden="true"
+      />
+      <div class="research-verification" data-research-verification>
+        <span>Loading secure verification…</span>
+      </div>
+      <button class="button" type="submit" disabled data-research-submit>
+        Run multi-source research <span aria-hidden="true">→</span>
+      </button>
+      <p class="research-status" role="status" data-research-status>
+        Complete verification to enable the agent.
+      </p>
+      <p class="research-boundary">
+        Passive evidence only. The agent cannot visit, scan, submit, or modify
+        the domain. A verdict is not a guarantee of safety.
+      </p>
+    </form>
+
+    <section class="research-results" aria-live="polite" data-research-results>
+      <div class="research-empty" data-research-empty>
+        <span aria-hidden="true">?</span>
+        <h3>Enter a domain to see how the agent investigates it.</h3>
+        <p>
+          You’ll get a verdict, a plain-English explanation, the evidence used,
+          and anything the agent could not verify.
+        </p>
+      </div>
+
+      <div class="research-progress" hidden data-research-progress>
+        <p class="eyebrow">Agent progress</p>
+        <h3>Building the evidence record…</h3>
+        <ol>
+          <li data-research-stage="validate"><span>01</span>Validate domain</li>
+          <li data-research-stage="sources">
+            <span>02</span>Consult passive sources
+          </li>
+          <li data-research-stage="normalize">
+            <span>03</span>Normalize evidence
+          </li>
+          <li data-research-stage="judge">
+            <span>04</span>LLM evidence review
+          </li>
+          <li data-research-stage="report"><span>05</span>Prepare verdict</li>
+        </ol>
+      </div>
+
+      <div class="research-error" hidden data-research-error tabindex="-1">
+        <span aria-hidden="true">!</span>
+        <div>
+          <h3>Research could not complete.</h3>
+          <p data-research-error-message></p>
+        </div>
+      </div>
+
+      <article
+        class="research-report"
+        hidden
+        data-research-report
+        tabindex="-1"
+      >
+        <header class="research-report-header">
+          <div>
+            <p class="eyebrow">Research complete</p>
+            <h3 data-research-title></h3>
+          </div>
+          <div class="research-verdict-block">
+            <span class="research-priority" data-research-verdict></span>
+            <span class="research-confidence" data-research-confidence></span>
+          </div>
+        </header>
+        <section class="research-summary-card">
+          <h4>What this means</h4>
+          <p class="research-summary" data-research-summary></p>
+        </section>
+        <p class="research-agent-warning" hidden data-research-agent-warning>
+        </p>
+
+        <section class="research-reasoning">
+          <div class="research-reasoning-heading">
+            <p class="eyebrow">Why this verdict</p>
+            <h4>How the agent made the decision</h4>
+          </div>
+          <ol class="research-reasoning-steps">
+            <li>
+              <span>01</span>
+              <div>
+                <h5>What it checked</h5>
+                <p data-research-source-reason></p>
+              </div>
+            </li>
+            <li>
+              <span>02</span>
+              <div>
+                <h5>What drove the verdict</h5>
+                <ul data-research-supporting></ul>
+              </div>
+            </li>
+            <li>
+              <span>03</span>
+              <div>
+                <h5>What limits this result</h5>
+                <ul data-research-uncertainties></ul>
+                <p data-research-confidence-reason></p>
+                <div data-research-counter-block hidden>
+                  <p class="research-counter-label">Counter-evidence</p>
+                  <ul data-research-contradicting></ul>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="research-next-steps">
+          <h4>What you should do next</h4>
+          <ul data-research-next-steps></ul>
+        </section>
+
+        <details class="research-details">
+          <summary>
+            View detailed source records
+            <span data-research-source-count></span>
+          </summary>
+          <section class="research-evidence-block">
+            <div class="research-source-list" data-research-sources></div>
+          </section>
+          <section class="research-evidence-block">
+            <div class="research-block-heading">
+              <h4>Domain shape</h4>
+              <span>Observed, not a verdict</span>
+            </div>
+            <div class="research-lexical" data-research-lexical></div>
+          </section>
+          <div class="research-safeguards" data-research-safeguards></div>
+          <footer class="research-report-meta" data-research-meta></footer>
+        </details>
+      </article>
+    </section>
+  </div>
+</section>
+
+<script>
+  interface TurnstileApi {
+    render(
+      container: HTMLElement,
+      options: {
+        sitekey: string;
+        theme: 'auto';
+        size: 'flexible';
+        callback: (token: string) => void;
+        'expired-callback': () => void;
+        'error-callback': () => void;
+      },
+    ): string;
+    reset(widgetId: string): void;
+  }
+  interface ResearchConfig {
+    available: boolean;
+    turnstileSiteKey: string | null;
+    model: string;
+  }
+  interface EvidenceSource {
+    id: string;
+    name: string;
+    status: 'success' | 'unavailable' | 'not_configured';
+    summary: string;
+    sourceUrl: string;
+    observedAt: string;
+    facts: Record<string, unknown>;
+    warnings: string[];
+    durationMs: number;
+  }
+  interface ResearchResult {
+    requestId: string;
+    domain: string;
+    contract: { repository: string; commit: string; version: number };
+    model: string;
+    verdict: {
+      verdict: string;
+      confidence: number;
+      executive_summary: string;
+      supporting_evidence: string[];
+      contradicting_evidence: string[];
+      uncertainties: string[];
+      recommended_next_steps: string[];
+      sources_used: string[];
+      mode: 'llm' | 'evidence_fallback';
+    };
+    agentWarning: string | null;
+    sources: EvidenceSource[];
+    lexicalFacts: Record<string, string | number | boolean>;
+    safeguards: string[];
+    durationMs: number;
+  }
+  declare global {
+    interface Window {
+      turnstile?: TurnstileApi;
+    }
+  }
+
+  const researchRoot = document.querySelector<HTMLElement>(
+    '[data-research-root]',
+  );
+  if (researchRoot) {
+    const form = researchRoot.querySelector<HTMLFormElement>(
+      '[data-research-form]',
+    );
+    const domainInput = researchRoot.querySelector<HTMLInputElement>(
+      '[data-research-domain]',
+    );
+    const keyInput = researchRoot.querySelector<HTMLInputElement>(
+      '[data-research-key]',
+    );
+    const submit = researchRoot.querySelector<HTMLButtonElement>(
+      '[data-research-submit]',
+    );
+    const status = researchRoot.querySelector<HTMLElement>(
+      '[data-research-status]',
+    );
+    const verification = researchRoot.querySelector<HTMLElement>(
+      '[data-research-verification]',
+    );
+    const empty = researchRoot.querySelector<HTMLElement>(
+      '[data-research-empty]',
+    );
+    const progress = researchRoot.querySelector<HTMLElement>(
+      '[data-research-progress]',
+    );
+    const errorPanel = researchRoot.querySelector<HTMLElement>(
+      '[data-research-error]',
+    );
+    const report = researchRoot.querySelector<HTMLElement>(
+      '[data-research-report]',
+    );
+    let turnstileToken = '';
+    let widgetId = '';
+    let ready = false;
+    let statusLocked = false;
+    const sessionId =
+      sessionStorage.getItem('domain-research-session') ||
+      `${crypto.randomUUID().replaceAll('-', '')}_${Date.now().toString(36)}`;
+    sessionStorage.setItem('domain-research-session', sessionId);
+
+    const select = <T extends HTMLElement>(selector: string) =>
+      researchRoot.querySelector<T>(selector);
+    const setText = (selector: string, value: string) => {
+      const target = select<HTMLElement>(selector);
+      if (target) target.textContent = value;
+    };
+    const fillList = (
+      selector: string,
+      values: string[],
+      emptyMessage: string,
+    ) => {
+      const list = select<HTMLUListElement>(selector);
+      if (!list) return;
+      const items = values.length ? values : [emptyMessage];
+      list.replaceChildren(
+        ...items.map((value) => {
+          const item = document.createElement('li');
+          item.textContent = value;
+          return item;
+        }),
+      );
+    };
+    const updateSubmit = () => {
+      if (submit) submit.disabled = !ready || !turnstileToken;
+    };
+    const setProgressStage = (index: number) => {
+      researchRoot
+        .querySelectorAll<HTMLElement>('[data-research-stage]')
+        .forEach((stage, stageIndex) => {
+          stage.dataset.state =
+            stageIndex < index
+              ? 'complete'
+              : stageIndex === index
+                ? 'active'
+                : 'pending';
+        });
+    };
+    const loadTurnstile = async (sitekey: string) => {
+      await new Promise<void>((resolve, reject) => {
+        if (window.turnstile) return resolve();
+        const existing = document.querySelector<HTMLScriptElement>(
+          'script[src^="https://challenges.cloudflare.com/turnstile/v0/api.js"]',
+        );
+        if (existing) {
+          existing.addEventListener('load', () => resolve(), { once: true });
+          existing.addEventListener(
+            'error',
+            () => reject(new Error('Verification failed to load')),
+            { once: true },
+          );
+          return;
+        }
+        const script = document.createElement('script');
+        script.src =
+          'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Verification failed to load'));
+        document.head.append(script);
+      });
+      if (!verification || !window.turnstile)
+        throw new Error('Verification unavailable');
+      verification.replaceChildren();
+      widgetId = window.turnstile.render(verification, {
+        sitekey,
+        theme: 'auto',
+        size: 'flexible',
+        callback: (token) => {
+          turnstileToken = token;
+          if (status && !statusLocked)
+            status.textContent =
+              'Agent ready. Enter a domain and run research.';
+          updateSubmit();
+        },
+        'expired-callback': () => {
+          turnstileToken = '';
+          if (status && !statusLocked)
+            status.textContent = 'Verification expired. Please verify again.';
+          updateSubmit();
+        },
+        'error-callback': () => {
+          turnstileToken = '';
+          if (status && !statusLocked)
+            status.textContent = 'Verification failed. Refresh and try again.';
+          updateSubmit();
+        },
+      });
+    };
+    const initialize = async () => {
+      try {
+        const response = await fetch('/api/domain-research', {
+          headers: { accept: 'application/json' },
+        });
+        const config = (await response.json()) as ResearchConfig;
+        if (!response.ok || !config.available || !config.turnstileSiteKey) {
+          throw new Error('Agent unavailable');
+        }
+        ready = true;
+        await loadTurnstile(config.turnstileSiteKey);
+      } catch {
+        if (verification)
+          verification.textContent = 'Agent verification unavailable.';
+        if (status)
+          status.textContent = 'The live agent is temporarily unavailable.';
+      }
+    };
+    const humanize = (value: string) =>
+      value
+        .replaceAll('_', ' ')
+        .replace(/\b\w/g, (letter) => letter.toUpperCase());
+    const factText = (key: string, value: unknown) => {
+      const label = humanize(key);
+      if (Array.isArray(value)) {
+        return `${label}: ${value.length ? value.map(String).slice(0, 8).join(', ') : 'None returned'}`;
+      }
+      if (value && typeof value === 'object')
+        return `${label}: structured evidence`;
+      if (typeof value === 'boolean')
+        return `${label}: ${value ? 'Yes' : 'No'}`;
+      return `${label}: ${value ?? 'Not returned'}`;
+    };
+    const renderSources = (sources: EvidenceSource[]) => {
+      const container = select<HTMLElement>('[data-research-sources]');
+      if (!container) return;
+      container.replaceChildren();
+      for (const source of sources) {
+        const article = document.createElement('article');
+        article.className = 'research-source-card';
+        article.dataset.status = source.status;
+        const header = document.createElement('header');
+        const title = document.createElement('h5');
+        title.textContent = source.name;
+        const badge = document.createElement('span');
+        badge.textContent = humanize(source.status);
+        header.append(title, badge);
+        const summary = document.createElement('p');
+        summary.textContent = source.summary;
+        const facts = document.createElement('ul');
+        const entries = Object.entries(source.facts).slice(0, 8);
+        facts.replaceChildren(
+          ...entries.map(([key, value]) => {
+            const item = document.createElement('li');
+            item.textContent = factText(key, value);
+            return item;
+          }),
+        );
+        const footer = document.createElement('footer');
+        const link = document.createElement('a');
+        link.href = source.sourceUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = 'Open source ↗';
+        const timing = document.createElement('span');
+        timing.textContent = `${source.durationMs} ms`;
+        footer.append(link, timing);
+        article.append(header, summary);
+        if (entries.length) article.append(facts);
+        for (const warning of source.warnings) {
+          const note = document.createElement('p');
+          note.className = 'research-source-warning';
+          note.textContent = warning;
+          article.append(note);
+        }
+        article.append(footer);
+        container.append(article);
+      }
+    };
+    const renderResult = (result: ResearchResult) => {
+      if (empty) empty.hidden = true;
+      if (progress) progress.hidden = true;
+      if (errorPanel) errorPanel.hidden = true;
+      if (report) report.hidden = false;
+      setText(
+        '[data-research-title]',
+        `What the agent found for ${result.domain}`,
+      );
+      const verdict = select<HTMLElement>('[data-research-verdict]');
+      if (verdict) {
+        verdict.textContent = humanize(result.verdict.verdict);
+        verdict.dataset.level = result.verdict.verdict;
+      }
+      setText(
+        '[data-research-confidence]',
+        `${result.verdict.confidence}% confidence`,
+      );
+      setText('[data-research-summary]', result.verdict.executive_summary);
+      fillList(
+        '[data-research-supporting]',
+        result.verdict.supporting_evidence,
+        'No supporting evidence was returned.',
+      );
+      fillList(
+        '[data-research-contradicting]',
+        result.verdict.contradicting_evidence,
+        'No counter-evidence was identified.',
+      );
+      const counterBlock = select<HTMLElement>('[data-research-counter-block]');
+      if (counterBlock) {
+        counterBlock.hidden =
+          result.verdict.contradicting_evidence.length === 0;
+      }
+      fillList(
+        '[data-research-uncertainties]',
+        result.verdict.uncertainties,
+        'No additional uncertainties were reported.',
+      );
+      fillList(
+        '[data-research-next-steps]',
+        result.verdict.recommended_next_steps,
+        'Review the linked source records manually.',
+      );
+      const warning = select<HTMLElement>('[data-research-agent-warning]');
+      if (warning) {
+        warning.hidden = !result.agentWarning;
+        warning.textContent = result.agentWarning || '';
+      }
+      renderSources(result.sources);
+      const successful = result.sources.filter(
+        (source) => source.status === 'success',
+      ).length;
+      const successfulNames = result.sources
+        .filter((source) => source.status === 'success')
+        .map((source) => source.name);
+      const unavailableNames = result.sources
+        .filter((source) => source.status !== 'success')
+        .map((source) => source.name);
+      setText(
+        '[data-research-source-count]',
+        `${successful} of ${result.sources.length} sources returned evidence`,
+      );
+      setText(
+        '[data-research-source-reason]',
+        successfulNames.length
+          ? `${successful} of ${result.sources.length} sources returned data: ${successfulNames.join(', ')}.${unavailableNames.length ? ` ${unavailableNames.join(', ')} did not provide evidence.` : ''}`
+          : 'None of the configured sources returned usable evidence.',
+      );
+      const reputationAvailable = result.sources.some(
+        (source) => source.id === 'virustotal' && source.status === 'success',
+      );
+      setText(
+        '[data-research-confidence-reason]',
+        reputationAvailable
+          ? `After comparing the available evidence, the agent assigned ${result.verdict.confidence}% confidence. This is an assessment of the current evidence, not a guarantee that the domain is safe.`
+          : `Confidence is limited to ${result.verdict.confidence}% because no reputation source was available. The verdict is based only on the passive DNS, registration, and certificate evidence returned for this request—it does not mean the domain is guaranteed to be safe.`,
+      );
+      const lexical = select<HTMLElement>('[data-research-lexical]');
+      if (lexical) {
+        lexical.replaceChildren(
+          ...Object.entries(result.lexicalFacts).map(([key, value]) => {
+            const item = document.createElement('span');
+            item.textContent = factText(key, value);
+            return item;
+          }),
+        );
+      }
+      const safeguards = select<HTMLElement>('[data-research-safeguards]');
+      if (safeguards) {
+        safeguards.replaceChildren(
+          ...result.safeguards.map((value) => {
+            const item = document.createElement('span');
+            item.textContent = value;
+            return item;
+          }),
+        );
+      }
+      const mode =
+        result.verdict.mode === 'llm' ? 'LLM verdict' : 'Evidence fallback';
+      setText(
+        '[data-research-meta]',
+        `${mode} · ${result.durationMs} ms · Request ${result.requestId.slice(0, 8)} · Contract ${result.contract.commit.slice(0, 7)}`,
+      );
+      report?.focus({ preventScroll: true });
+      report?.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'auto'
+          : 'smooth',
+        block: 'start',
+      });
+    };
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!domainInput || !submit || !turnstileToken) {
+        if (status)
+          status.textContent = 'Complete verification before running research.';
+        return;
+      }
+      const data = new FormData(form);
+      statusLocked = true;
+      submit.disabled = true;
+      if (empty) empty.hidden = true;
+      if (errorPanel) errorPanel.hidden = true;
+      if (report) report.hidden = true;
+      if (progress) progress.hidden = false;
+      setProgressStage(0);
+      if (status)
+        status.textContent = 'The agent is consulting passive sources…';
+      let progressIndex = 0;
+      const progressTimer = window.setInterval(() => {
+        progressIndex = Math.min(progressIndex + 1, 4);
+        setProgressStage(progressIndex);
+      }, 900);
+      try {
+        const response = await fetch('/api/domain-research', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            accept: 'application/json',
+          },
+          body: JSON.stringify({
+            domain: domainInput.value,
+            virustotalApiKey: keyInput?.value || '',
+            turnstileToken,
+            sessionId,
+            website: data.get('website') || '',
+          }),
+        });
+        const result = (await response.json()) as ResearchResult & {
+          error?: string;
+          requestId?: string;
+        };
+        if (!response.ok) {
+          throw new Error(
+            `${result.error || 'Research failed.'}${result.requestId ? ` Request ${result.requestId.slice(0, 8)}.` : ''}`,
+          );
+        }
+        setProgressStage(5);
+        renderResult(result);
+        if (status) status.textContent = 'Research report complete.';
+      } catch (error) {
+        if (progress) progress.hidden = true;
+        if (empty) empty.hidden = true;
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'The research agent could not complete this request.';
+        if (errorPanel) {
+          errorPanel.hidden = false;
+          setText('[data-research-error-message]', message);
+          errorPanel.focus({ preventScroll: true });
+          errorPanel.scrollIntoView({
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)')
+              .matches
+              ? 'auto'
+              : 'smooth',
+            block: 'center',
+          });
+        }
+        if (status) {
+          status.textContent = message;
+        }
+      } finally {
+        window.clearInterval(progressTimer);
+        if (keyInput) keyInput.value = '';
+        turnstileToken = '';
+        if (widgetId && window.turnstile) window.turnstile.reset(widgetId);
+        updateSubmit();
+      }
+    });
+    domainInput?.addEventListener('input', () => {
+      statusLocked = false;
+      if (status) {
+        status.textContent = turnstileToken
+          ? 'Agent ready. Run research for the updated domain.'
+          : 'Complete verification to research the updated domain.';
+      }
+    });
+    void initialize();
+  }
+</script>

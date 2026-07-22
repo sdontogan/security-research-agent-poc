@@ -1,0 +1,11 @@
+{
+  "source": "https://github.com/sdontogan/beyond-features",
+  "commit": "2f1e00cc2c8d7ebc1acbb93d6c1f48034f2b9ee2",
+  "files": [
+    "functions/api/domain-research.ts",
+    "functions/_lib/domain-agent-contract.ts",
+    "src/components/DomainResearchDemo.astro",
+    "src/content/projects/ai-security-research-agent-poc.md",
+    "src/styles/global.css"
+  ]
+}
