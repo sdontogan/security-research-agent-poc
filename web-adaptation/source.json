@@ -1,10 +1,9 @@
 {
   "source": "https://github.com/sdontogan/beyond-features",
-  "commit": "b6b28eda2a8d31aa672551aabf83061f09c36fb6",
+  "commit": "380381e1657105eb0f76e6c4655bae40e2074ef1",
   "files": [
     "functions/api/domain-research.ts",
     "functions/api/chat.ts",
-    "functions/_lib/domain-agent-contract.ts",
     "functions/_lib/knowledge.ts",
     "src/components/DomainResearchDemo.astro",
     "src/components/ProfessionalChat.astro",
