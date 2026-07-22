@@ -61,15 +61,25 @@ const STOP_WORDS = new Set([
   'work',
 ]);
 const PRIVATE_DATA_PATTERN =
-  /\b(email|e-mail|phone|address|salary|compensation|reference|birthday|birth date|social security|ssn|private|confidential|secret|password|token)\b/i;
+  /\b(email address|e-mail address|phone number|home address|mailing address|salary|compensation|personal references?|birthday|birth date|social security|ssn|private contact|private information|confidential employer information|password)\b/i;
 const INJECTION_PATTERN =
-  /\b(ignore|override|disregard|reveal|repeat|print|show)\b.{0,45}\b(instruction|prompt|system|context|secret|policy|rules?)\b|\b(jailbreak|developer mode|system prompt|hidden prompt|prompt injection)\b/i;
+  /\b(ignore|forget|bypass|override|disregard)\b.{0,80}\b(previous|above|instruction|prompt|system|policy|rules?|guardrail|restriction)\b|\b(reveal|repeat|print|show|extract|expose|encode|decode)\b.{0,80}\b(instruction|prompt|system|context|secret|policy|rules?|source)\b|\b(act as|pretend|roleplay)\b.{0,80}\b(system|developer|unrestricted|jailbreak|administrator)\b|\b(jailbreak|developer mode|system prompt|hidden prompt|prompt injection)\b/i;
+const UNSAFE_OUTPUT_PATTERN =
+  /SECURITY AND SCOPE RULES|APPROVED SOURCES|VISITOR QUESTION|system prompt|hidden prompt|developer message/i;
 const AI_EXPERIENCE_YEARS_PATTERN =
   /\b(how many|number of|years? of)\b.{0,50}\b(ai|artificial intelligence|machine learning|ml)\b|\b(ai|artificial intelligence|machine learning|ml)\b.{0,50}\byears?\b/i;
 const PRODUCTION_AI_SYSTEMS_PATTERN =
   /\b(production|deployed|built|build|developed)\b.{0,50}\b(ai|artificial intelligence|machine learning|ml|rag|chatbot|systems?)\b|\b(ai|machine learning|ml|rag)\b.{0,50}\b(production|deployed|built|systems?)\b/i;
 const CLOUD_DATA_TECH_PATTERN =
   /\b(cloud|data)\b.{0,40}\b(technologies|technology|platforms?|tools?|stack)\b|\b(technologies|platforms?|tools?|stack)\b.{0,40}\b(cloud|data)\b/i;
+const PORTFOLIO_RAG_AGENT_PATTERN =
+  /\b(portfolio|resume|résumé|professional background|this)\b.{0,60}\b(rag|chatbot|llm agent|ai agent|assistant)\b|\b(rag|chatbot|llm agent)\b.{0,60}\b(portfolio|resume|résumé|professional background)\b/i;
+const DOMAIN_RESEARCH_AGENT_PATTERN =
+  /\b(domain|dns|security)\b.{0,60}\b(research|researcher|agent|project)\b|\b(research|researcher)\b.{0,60}\b(domain|dns|security)\b/i;
+const PROJECTS_PATTERN =
+  /\b(projects?|portfolio work|things? (?:she|sarah) built)\b/i;
+const PRODUCTION_READINESS_PATTERN =
+  /\b(production[- ]ready|production readiness|scalability|scalable|observability|logging|monitoring|reliability|reliable systems?|operational readiness)\b/i;
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -262,9 +272,60 @@ export async function onRequestPost({ request, env }: Context) {
     );
   }
 
+  if (PRIVATE_DATA_PATTERN.test(question)) {
+    return answerResponse(
+      'That information is intentionally not public. You can use the site’s contact page for an appropriate professional follow-up.',
+      [{ title: 'Contact', url: '/contact' }],
+      'blocked-private',
+    );
+  }
+
+  if (PORTFOLIO_RAG_AGENT_PATTERN.test(question)) {
+    return answerResponse(
+      'Sarah built this RAG-based LLM portfolio agent. It retrieves relevant facts from a curated public knowledge base, asks a Cloudflare-hosted LLM to answer only from those facts, and links to supporting pages. Its defenses include origin checks, Turnstile, bounded inputs, injection detection, private-data blocking, output sanitization, rate-limit support, and short privacy-aware history retention. These controls make it tamper-resistant, not tamper-proof.',
+      [{ title: 'RAG portfolio agent', url: '/#portfolio-assistant' }],
+      'answered-deterministic',
+    );
+  }
+
+  if (DOMAIN_RESEARCH_AGENT_PATTERN.test(question)) {
+    return answerResponse(
+      'Sarah built a read-only AI agent that researches one public domain using passive DNS, registration, and certificate evidence, with optional VirusTotal enrichment. Workers AI compares the bounded evidence, while deterministic guardrails preserve failed sources, limit confidence, and prevent claims that a domain is safe. The agent cannot scan domains, browse arbitrary URLs, run commands, or store the optional VirusTotal key.',
+      [
+        {
+          title: 'AI Security Research Agent',
+          url: '/projects/ai-security-research-agent-poc',
+        },
+      ],
+      'answered-deterministic',
+    );
+  }
+
+  if (PROJECTS_PATTERN.test(question)) {
+    return answerResponse(
+      'Two projects are demonstrated directly on this portfolio: a RAG-based LLM agent that answers questions about Sarah’s public professional background with citations, and a read-only AI domain-research agent that gathers passive evidence and explains a bounded security verdict. Her résumé also covers production RAG for Cisco U., phishing-detection pipelines, security-data analysis, and an Atlassian MCP connector for knowledge retrieval.',
+      [
+        { title: 'RAG portfolio agent', url: '/#portfolio-assistant' },
+        {
+          title: 'AI Security Research Agent',
+          url: '/projects/ai-security-research-agent-poc',
+        },
+      ],
+      'answered-deterministic',
+    );
+  }
+
+  if (PRODUCTION_READINESS_PATTERN.test(question)) {
+    return answerResponse(
+      'Sarah treats production readiness as an operating discipline, not a deployment milestone. She emphasizes security and privacy boundaries, scalable architecture, data quality, evaluation, logging and observability, monitoring, cost and latency controls, graceful failure, human review, versioning, rollback plans, and feedback loops. The exact mix depends on the system and its risk.',
+      [{ title: 'How Sarah works', url: '/about' }],
+      'answered-deterministic',
+    );
+  }
+
   if (AI_EXPERIENCE_YEARS_PATTERN.test(question)) {
     return answerResponse(
-      'As of July 2026, Sarah has more than 10 years of professional AI and machine-learning experience, dating to March 2016. This includes machine-learning security work at Cisco Talos, two years focused on generative AI and production RAG with Cisco Learning and Development, and production ML and AI-assisted cybersecurity work at ThreatSTOP. Overlapping roles are not double-counted.',
+      'As of July 2026, Sarah has more than 10 years of cybersecurity and data experience, including machine-learning work dating to 2016. She also spent two years focused specifically on generative AI and production RAG with Cisco Learning and Development. Her current ThreatSTOP work includes production ML and AI-assisted cybersecurity. Overlapping roles are not double-counted.',
       [{ title: 'Professional experience', url: '/resume' }],
       'answered-deterministic',
     );
@@ -294,14 +355,6 @@ export async function onRequestPost({ request, env }: Context) {
       'out-of-scope',
     );
   }
-  if (PRIVATE_DATA_PATTERN.test(question) && matches[0].id === 'boundaries') {
-    return answerResponse(
-      'That information is intentionally not public. You can use the site’s contact page for an appropriate professional follow-up.',
-      [{ title: 'Contact', url: '/contact' }],
-      'blocked-private',
-    );
-  }
-
   const sourceContext = matches
     .map(
       (entry, index) =>
@@ -341,7 +394,8 @@ ${sourceContext}`;
     const answer = cleanAnswer(
       typeof result?.response === 'string' ? result.response : '',
     );
-    if (!answer) throw new Error('Empty model response');
+    if (!answer || UNSAFE_OUTPUT_PATTERN.test(answer))
+      throw new Error('Unsafe or empty model response');
     return answerResponse(
       answer,
       matches.slice(0, 3).map(({ title, url }) => ({ title, url })),

@@ -35,9 +35,10 @@
     <div class="chat-notice">
       This agent uses retrieval-augmented generation (RAG) to find relevant
       information in Sarah’s approved public résumé and portfolio. An LLM then
-      writes the answer from those sources. Questions and answers are retained
-      for up to 30 days to improve quality. Do not submit personal or
-      confidential information.
+      writes the answer from those sources. Tamper-resistant controls treat
+      questions as untrusted input and block common attempts to change the
+      agent’s instructions. Questions and answers are retained for up to 30 days
+      to improve quality. Do not submit personal or confidential information.
     </div>
 
     <div
@@ -62,8 +63,8 @@
       >
       <button
         type="button"
-        data-chat-prompt="What is Sarah’s cybersecurity experience?"
-        >Cybersecurity experience</button
+        data-chat-prompt="What portfolio projects has Sarah built?"
+        >Portfolio projects</button
       >
       <button
         type="button"
@@ -72,8 +73,8 @@
       >
       <button
         type="button"
-        data-chat-prompt="What are Sarah’s strongest technical skills?"
-        >Technical strengths</button
+        data-chat-prompt="How does Sarah think about production-ready AI systems?"
+        >Production-ready AI</button
       >
     </div>
 
