@@ -76,6 +76,8 @@ const PORTFOLIO_RAG_AGENT_PATTERN =
   /\b(portfolio|resume|résumé|professional background|this)\b.{0,60}\b(rag|chatbot|llm agent|ai agent|assistant)\b|\b(rag|chatbot|llm agent)\b.{0,60}\b(portfolio|resume|résumé|professional background)\b/i;
 const DOMAIN_RESEARCH_AGENT_PATTERN =
   /\b(domain|dns|security)\b.{0,60}\b(research|researcher|agent|project)\b|\b(research|researcher)\b.{0,60}\b(domain|dns|security)\b/i;
+const PHISHING_DOMAIN_ML_PATTERN =
+  /\b(phishing|look[- ]alike|malicious)\b.{0,60}\b(domain|dns|detection|classifier|model|project)\b|\b(domain|dns)\b.{0,60}\b(phishing|look[- ]alike|malicious|ensemble)\b/i;
 const PROJECTS_PATTERN =
   /\b(projects?|portfolio work|things? (?:she|sarah) built)\b/i;
 const PRODUCTION_READINESS_PATTERN =
@@ -288,6 +290,19 @@ export async function onRequestPost({ request, env }: Context) {
     );
   }
 
+  if (PHISHING_DOMAIN_ML_PATTERN.test(question)) {
+    return answerResponse(
+      'At ThreatSTOP, Sarah built a production machine-learning system that screens live DNS traffic for malicious and look-alike phishing domains. Four classifiers vote with independently tuned thresholds over more than 50 engineered features. A separate three-stage safety net checks domain age and structure, VirusTotal consensus, and WHOIS, infrastructure, and lexical signals before action. The portfolio reports roughly 800 malicious or suspicious domains flagged and blocked per day at about 90% precision on live traffic.',
+      [
+        {
+          title: 'ML Phishing Domain Detection',
+          url: '/projects/ml-phishing-domain-detection',
+        },
+      ],
+      'answered-deterministic',
+    );
+  }
+
   if (DOMAIN_RESEARCH_AGENT_PATTERN.test(question)) {
     return answerResponse(
       'Sarah built a read-only AI agent that researches one public domain using passive DNS, registration, and certificate evidence, with optional VirusTotal enrichment. Workers AI compares the bounded evidence, while deterministic guardrails preserve failed sources, limit confidence, and prevent claims that a domain is safe. The agent cannot scan domains, browse arbitrary URLs, run commands, or store the optional VirusTotal key.',
@@ -303,8 +318,12 @@ export async function onRequestPost({ request, env }: Context) {
 
   if (PROJECTS_PATTERN.test(question)) {
     return answerResponse(
-      'Two projects are demonstrated directly on this portfolio: a RAG-based LLM agent that answers questions about Sarah’s public professional background with citations, and a read-only AI domain-research agent that gathers passive evidence and explains a bounded security verdict. Her résumé also covers production RAG for Cisco U., phishing-detection pipelines, security-data analysis, and an Atlassian MCP connector for knowledge retrieval.',
+      'Three projects are demonstrated directly on this portfolio: a production ML phishing-domain detection system with a multi-stage verification safety net, a RAG-based LLM agent that answers questions about Sarah’s public professional background with citations, and a read-only AI domain-research agent that gathers passive evidence and explains a bounded security verdict. Her résumé also covers production RAG for Cisco U., security-data analysis, and an Atlassian MCP connector for knowledge retrieval.',
       [
+        {
+          title: 'ML Phishing Domain Detection',
+          url: '/projects/ml-phishing-domain-detection',
+        },
         { title: 'RAG portfolio agent', url: '/#portfolio-assistant' },
         {
           title: 'AI Security Research Agent',

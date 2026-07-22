@@ -36,9 +36,7 @@ const { Content } = await render(project);
       <div class="case-summary">
         <p>{project.data.summary}</p>
         <div class="case-meta">
-          <span>Working prototype</span><strong
-            >Live demo · Architecture · Source code</strong
-          >
+          <span>{project.data.status}</span><strong>{project.data.meta}</strong>
         </div>
       </div>
       {
@@ -66,9 +64,13 @@ const { Content } = await render(project);
     )
   }
 
-  <section class="container-wide section-tight">
-    <ArchitectureDiagram type={project.data.diagram} />
-  </section>
+  {
+    project.data.diagram && (
+      <section class="container-wide section-tight">
+        <ArchitectureDiagram type={project.data.diagram} />
+      </section>
+    )
+  }
 
   <section class="section">
     <div class="container case-layout">
@@ -102,7 +104,7 @@ const { Content } = await render(project);
   <CTA
     eyebrow="Want to know more?"
     title="Ask me how I approached the project."
-    text="I’m happy to discuss the architecture, evaluation, failure modes, and tradeoffs behind the prototype."
+    text="I’m happy to discuss the architecture, evaluation, failure modes, and tradeoffs behind the system."
     primaryLabel="Contact Sarah"
     primaryHref="/contact"
     secondaryLabel="Recruiter overview"
