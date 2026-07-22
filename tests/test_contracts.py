@@ -22,3 +22,10 @@ def test_policy_never_defines_a_safe_verdict() -> None:
 
     assert "safe" not in policy["verdicts"]
     assert all(value != "safe" for value in policy["verdicts"])
+
+
+def test_prompt_keeps_missing_sources_out_of_supporting_evidence() -> None:
+    prompt = load_text("system-prompt.txt")
+
+    assert "Missing or unconfigured sources belong under uncertainties" in prompt
+    assert "DNS presence by itself is neither suspicious" in prompt

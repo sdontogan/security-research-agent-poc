@@ -225,7 +225,7 @@ st.markdown(
 st.markdown('<h1 class="project-title">Domain Research Agent</h1>', unsafe_allow_html=True)
 st.markdown(
     '<p class="lede">A focused, evidence-first agent for checking public domain reputation '
-    'without scanning or submitting content.</p>',
+    "without scanning or submitting content.</p>",
     unsafe_allow_html=True,
 )
 st.markdown(
@@ -304,7 +304,7 @@ if prompt:
         if outcome.priority.value != "unknown":
             st.markdown(
                 f'<div class="priority priority-{outcome.priority.value}">'
-                f'{outcome.priority.value} priority</div>',
+                f"{outcome.priority.value} priority</div>",
                 unsafe_allow_html=True,
             )
         st.markdown(outcome.message)
